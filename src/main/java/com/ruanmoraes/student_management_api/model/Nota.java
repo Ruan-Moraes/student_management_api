@@ -1,5 +1,6 @@
 package com.ruanmoraes.student_management_api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +19,8 @@ public class Nota {
     @Column(nullable = false)
     private Double valorNota;
 
-    @OneToOne(mappedBy = "notaAluno")
-    private Matricula matriculaAssociada;
+    @OneToOne
+    @JoinColumn(name = "matricula_id", nullable = false)
+    @JsonIgnore
+    private Matricula matricula;
 }

@@ -1,9 +1,12 @@
 package com.ruanmoraes.student_management_api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "tb_alunos")
@@ -18,6 +21,10 @@ public class Aluno {
     @Column(nullable = false)
     private String nome;
 
-    @OneToOne(mappedBy = "alunoAssociado", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Frequencia registroDeFrequencia;
+    @Column(nullable = false)
+    private Double percentualFrequencia;
+
+    @OneToMany(mappedBy = "aluno", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Matricula> matriculas;
 }
