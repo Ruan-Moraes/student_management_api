@@ -1,0 +1,12 @@
+2025-02-07 19:30:17.478598-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]DESC TABLE TB_ALUNOS"; expected "DELETE, DROP"; SQL statement:
+DESC TABLE TB_ALUNOS [42001-232]
+2025-02-07 19:30:44.450839-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]DESC TB_ALUNOS"; expected "DELETE, DROP"; SQL statement:
+DESC TB_ALUNOS [42001-232]
+2025-02-07 19:30:50.738955-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]DESCRIBE TB_ALUNOS"; expected "DELETE, DROP"; SQL statement:
+DESCRIBE TB_ALUNOS [42001-232]
+2025-02-07 19:30:51.467251-03:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "[*]DESCRIBE TB_ALUNOS"; expected "DELETE, DROP"; SQL statement:
+DESCRIBE TB_ALUNOS [42001-232]
