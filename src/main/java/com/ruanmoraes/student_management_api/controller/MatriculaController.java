@@ -2,13 +2,11 @@ package com.ruanmoraes.student_management_api.controller;
 
 import com.ruanmoraes.student_management_api.model.Matricula;
 import com.ruanmoraes.student_management_api.service.MatriculaService;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RestController("/matriculas")
+@RestController
+@RequestMapping("/matriculas")
 public class MatriculaController {
     private final MatriculaService matriculaService;
 
@@ -16,17 +14,25 @@ public class MatriculaController {
         this.matriculaService = matriculaService;
     }
 
-
     @PostMapping("/criar")
-    public Matricula criarMatricula(@RequestBody Matricula matricula) {
-        return matriculaService.criarMatricula(matricula);
+    public ResponseEntity<Matricula> criarMatricula(
+            @RequestBody Matricula matricula
+    ) {
+        Matricula matriculaCriada = matriculaService.criarMatricula(matricula);
+
+        return ResponseEntity.ok(matriculaCriada);
     }
 
-    public void matricularAluno(Long alunoId, Long disciplinaId) {
-        // Lógica para matricular aluno
-    }
+    @DeleteMapping("/remover/{id}")
+    public ResponseEntity<String> removerMatricula(
+            @PathVariable Long id
+    ) {
+        boolean isDeleted = matriculaService.removerMatricula(id);
 
-    public void desmatricularAluno(Long alunoId, Long disciplinaId) {
-        // Lógica para desmatricular aluno
+        if (isDeleted) {
+            return ResponseEntity.ok("Matrícula removida com sucesso");
+        }
+
+        return ResponseEntity.notFound().build();
     }
 }
