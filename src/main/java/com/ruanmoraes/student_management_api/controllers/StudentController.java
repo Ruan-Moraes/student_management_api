@@ -48,17 +48,17 @@ public class StudentController {
         return ResponseEntity.status(HttpStatus.OK).body(student);
     }
 
-    @DeleteMapping(value = "/delete/{id}", produces = "text/plain")
-    public ResponseEntity<?> deleteById(@PathVariable Long id) {
-        studentService.deleteById(id);
-
-        return ResponseEntity.status(HttpStatus.OK).body("Student with id " + id + " deleted successfully.");
-    }
-
     @GetMapping("/low-frequency/{frequency}")
     public ResponseEntity<?> listStudentsByLowFrequency(@PathVariable Double frequency) {
         List<StudentResponseDTO> students = studentService.listStudentsByLowFrequency(frequency);
 
         return ResponseEntity.status(HttpStatus.OK).body(students);
+    }
+
+    @DeleteMapping(value = "/delete/{id}", produces = "application/json")
+    public ResponseEntity<?> deleteById(@PathVariable Long id) {
+        studentService.deleteById(id);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

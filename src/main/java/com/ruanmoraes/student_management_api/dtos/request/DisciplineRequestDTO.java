@@ -16,7 +16,7 @@ public class DisciplineRequestDTO {
     private Long id;
 
     @NotNull(message = "O campo nome é obrigatório")
-    @Size(min = 3, max = 100, message = "O campo nome deve ter entre 3 e 100 caracteres")
+    @Size(min = 2, max = 100, message = "O campo nome deve ter entre 3 e 100 caracteres")
     private String name;
 
     private List<EnrollmentRequestDTO> enrollments;

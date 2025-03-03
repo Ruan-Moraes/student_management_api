@@ -55,6 +55,8 @@ public class StudentService {
     public StudentResponseDTO createStudent(StudentRequestDTO studentRequestDTO) {
         Student student = StudentMapper.INSTANCE.toModel(studentRequestDTO);
 
+        studentRepository.save(student);
+
         StudentResponseDTO studentResponseDTO = StudentMapper.INSTANCE.toDTO(student);
         studentResponseDTO.add(linkTo(methodOn(StudentController.class).createStudent(null)).withSelfRel().withType("POST"));
         studentResponseDTO.add(linkTo(methodOn(StudentController.class).getAllStudents()).withRel("FindAll").withType("GET"));
@@ -63,7 +65,7 @@ public class StudentService {
         studentResponseDTO.add(linkTo(methodOn(StudentController.class).updateById(null, null)).withRel("Update").withType("PUT"));
         studentResponseDTO.add(linkTo(methodOn(StudentController.class).deleteById(student.getId())).withRel("Delete").withType("DELETE"));
 
-        return StudentMapper.INSTANCE.toDTO(studentRepository.save(student));
+        return studentResponseDTO;
     }
 
     public StudentResponseDTO updateById(Long id, StudentRequestDTO studentRequestDTO) throws ResourceNotFoundException {
@@ -85,12 +87,6 @@ public class StudentService {
         return studentResponseDTO;
     }
 
-    public void deleteById(Long id) throws ResourceNotFoundException {
-        Student student = studentRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
-
-        studentRepository.delete(student);
-    }
-
     public List<StudentResponseDTO> listStudentsByLowFrequency(Double frequency) {
         return studentRepository.findAll().stream().filter(student -> student.getFrequency() < frequency)
                 .map(student -> {
@@ -106,5 +102,11 @@ public class StudentService {
                     return studentResponseDTO;
                 })
                 .toList();
+    }
+
+    public void deleteById(Long id) throws ResourceNotFoundException {
+        Student student = studentRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+
+        studentRepository.delete(student);
     }
 }
