@@ -1,43 +1,88 @@
 package com.ruanmoraes.student_management_api.services;
 
+import com.ruanmoraes.student_management_api.dtos.request.EnrollmentRequestDTO;
+import com.ruanmoraes.student_management_api.dtos.response.EnrollmentResponseDTO;
+import com.ruanmoraes.student_management_api.exceptions.ResourceAlreadyCreatedException;
+import com.ruanmoraes.student_management_api.exceptions.ResourceNotFoundException;
+import com.ruanmoraes.student_management_api.hateoas.EnrollmentAssembler;
+import com.ruanmoraes.student_management_api.mappers.DisciplineMapper;
+import com.ruanmoraes.student_management_api.mappers.StudentMapper;
+import com.ruanmoraes.student_management_api.models.Discipline;
+import com.ruanmoraes.student_management_api.models.Enrollment;
+import com.ruanmoraes.student_management_api.models.Student;
+import com.ruanmoraes.student_management_api.repositories.EnrollmentRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class MatriculaService {
-//    private final MatriculaRepository matriculaRepository;
-//    private final AlunoRepository alunoRepository;
-//    private final DisciplinaRepository disciplinaRepository;
-//
-//    public MatriculaService(MatriculaRepository matriculaRepository, AlunoRepository alunoRepository, DisciplinaRepository disciplinaRepository) {
-//        this.matriculaRepository = matriculaRepository;
-//        this.alunoRepository = alunoRepository;
-//        this.disciplinaRepository = disciplinaRepository;
-//    }
-//
-//    public Matricula criarMatricula(Matricula matricula) {
-//        Aluno aluno = alunoRepository.findById(matricula.getAluno().getId())
-//                .orElseThrow(() -> new RuntimeException("Aluno não encontrado"));
-//        Disciplina disciplina = disciplinaRepository.findById(matricula.getDisciplina().getId())
-//                .orElseThrow(() -> new RuntimeException("Disciplina não encontrada"));
-//
-//        matriculaRepository.findAll().stream()
-//                .filter(m -> m.getAluno().getId().equals(aluno.getId()))
-//                .filter(m -> m.getDisciplina().getId().equals(disciplina.getId()))
-//                .findFirst()
-//                .ifPresent(m -> {
-//                    throw new RuntimeException("Matrícula já existente");
-//                });
-//
-//        matricula.setAluno(aluno);
-//        matricula.setDisciplina(disciplina);
-//        matricula.setNota(new Nota(
-//                null,
-//                0.0,
-//                matricula
-//        ));
-//
-//        return matriculaRepository.save(matricula);
-//    }
+public class EnrollmentService {
+    private final EnrollmentRepository enrollmentRepository;
+    private final StudentService studentService;
+    private final DisciplineService disciplineService;
+    private final EnrollmentAssembler enrollmentAssembler;
+
+    public EnrollmentService(EnrollmentRepository enrollmentRepository, StudentService studentService, DisciplineService disciplineService, EnrollmentAssembler enrollmentAssembler) {
+        this.enrollmentRepository = enrollmentRepository;
+        this.studentService = studentService;
+        this.disciplineService = disciplineService;
+        this.enrollmentAssembler = enrollmentAssembler;
+    }
+
+    public List<EnrollmentResponseDTO> findAll() {
+        return enrollmentRepository.findAll().stream()
+                .map(enrollmentAssembler::toModel)
+                .toList();
+    }
+
+    public EnrollmentResponseDTO findById(Long id) throws ResourceNotFoundException {
+        Enrollment enrollment = enrollmentRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+
+        return enrollmentAssembler.toModel(enrollment);
+    }
+
+    public EnrollmentResponseDTO findByStudentIdAndDisciplineId(Long studentId, Long disciplineId) throws ResourceNotFoundException {
+        Student student = StudentMapper.INSTANCE.toModel(studentService.findById(studentId));
+        Discipline discipline = DisciplineMapper.INSTANCE.toModel(disciplineService.findById(disciplineId));
+
+        return enrollmentRepository.findAll().stream()
+                .filter(e -> e.getStudent().getId().equals(student.getId()))
+                .filter(e -> e.getDiscipline().getId().equals(discipline.getId()))
+                .findFirst()
+                .map(enrollmentAssembler::toModel)
+                .orElseThrow(ResourceNotFoundException::new);
+    }
+
+    public EnrollmentResponseDTO create(EnrollmentRequestDTO enrollmentRequestDTO) throws ResourceNotFoundException, ResourceAlreadyCreatedException {
+        Student student = StudentMapper.INSTANCE.toModel(studentService.findById(enrollmentRequestDTO.getStudentId()));
+        Discipline discipline = DisciplineMapper.INSTANCE.toModel(disciplineService.findById(enrollmentRequestDTO.getDisciplineId()));
+
+        enrollmentRepository.findAll().stream()
+                .filter(e -> e.getStudent().getId().equals(student.getId()))
+                .filter(e -> e.getDiscipline().getId().equals(discipline.getId()))
+                .findFirst()
+                .ifPresent((e) -> {
+                    throw new ResourceAlreadyCreatedException();
+                });
+
+        Enrollment enrollment = new Enrollment(
+                null,
+                student,
+                discipline,
+                null
+        );
+
+        enrollmentRepository.save(enrollment);
+
+        return enrollmentAssembler.toModel(enrollment);
+    }
+
+    public void deleteById(Long id) {
+        enrollmentRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+
+        enrollmentRepository.deleteById(id);
+    }
+
 //
 //    public boolean removerMatricula(Long id) {
 //        if (matriculaRepository.existsById(id)) {

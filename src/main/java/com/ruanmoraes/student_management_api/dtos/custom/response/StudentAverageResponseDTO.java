@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class StudentGradesDTO {
+public class StudentAverageResponseDTO {
     private String studentName;
     private Double average;
 }

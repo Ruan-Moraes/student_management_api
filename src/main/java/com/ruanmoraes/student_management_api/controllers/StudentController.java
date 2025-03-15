@@ -18,40 +18,30 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    @GetMapping(value = "/", produces = "application/json")
-    public ResponseEntity<?> getAllStudents() {
-        List<StudentResponseDTO> students = studentService.getAllStudents();
-
-        return ResponseEntity.status(200).body(students);
+    @GetMapping(produces = "application/json")
+    public ResponseEntity<List<StudentResponseDTO>> findAll() {
+        return ResponseEntity.status(200).body(studentService.findAll());
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
-    public ResponseEntity<StudentResponseDTO> getStudentById(@PathVariable Long id) {
-        StudentResponseDTO student = studentService.getStudentById(id);
-
-        return ResponseEntity.status(200).body(student);
+    public ResponseEntity<StudentResponseDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.status(200).body(studentService.findById(id));
     }
 
-    @PostMapping(path = "/", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<StudentResponseDTO> createStudent(@Valid @RequestBody StudentRequestDTO studentRequestDTO) {
-        StudentResponseDTO student = studentService.createStudent(studentRequestDTO);
-
-        return ResponseEntity.status(201).body(student);
+    @PostMapping(consumes = "application/json", produces = "application/json")
+    public ResponseEntity<StudentResponseDTO> create(@Valid @RequestBody StudentRequestDTO studentRequestDTO) {
+        return ResponseEntity.status(201).body(studentService.create(studentRequestDTO));
     }
 
 
-    @PutMapping(value = "/", consumes = "application/json", produces = "application/json")
+    @PutMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<StudentResponseDTO> updateById(@Valid @RequestBody StudentRequestDTO studentRequestDTO) {
-        StudentResponseDTO student = studentService.updateById(studentRequestDTO);
-
-        return ResponseEntity.status(200).body(student);
+        return ResponseEntity.status(200).body(studentService.updateById(studentRequestDTO));
     }
 
-    @GetMapping("/low-frequency")
-    public ResponseEntity<List<StudentResponseDTO>> listStudentsByLowFrequency(@RequestParam("frequency_below") Double frequency) {
-        List<StudentResponseDTO> students = studentService.listStudentsByLowFrequency(frequency);
-
-        return ResponseEntity.status(200).body(students);
+    @GetMapping(value = "/low-frequency")
+    public ResponseEntity<List<StudentResponseDTO>> findByLowFrequency(@RequestParam("frequency_below") Double frequency) {
+        return ResponseEntity.status(200).body(studentService.listByLowFrequency(frequency));
     }
 
     @DeleteMapping(value = "/{id}")

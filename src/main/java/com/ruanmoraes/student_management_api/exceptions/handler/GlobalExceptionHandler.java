@@ -1,6 +1,7 @@
 package com.ruanmoraes.student_management_api.exceptions.handler;
 
 
+import com.ruanmoraes.student_management_api.exceptions.ResourceAlreadyCreatedException;
 import com.ruanmoraes.student_management_api.exceptions.ResourceNotFoundException;
 import com.ruanmoraes.student_management_api.exceptions.response.ExceptionResponse;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
 
         return ResponseEntity.status(404).body(exceptionResponse);
+    }
+
+    @ExceptionHandler(ResourceAlreadyCreatedException.class)
+    public final ResponseEntity<?> EnrollmentCreatedAlreadyException(Exception e, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date().toString(),
+                e.getClass().getSimpleName(),
+                e.getMessage(),
+                request.getDescription(false)
+        );
+
+        return ResponseEntity.status(400).body(exceptionResponse);
     }
 
     @ExceptionHandler(Exception.class)

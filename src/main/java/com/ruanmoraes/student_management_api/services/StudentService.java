@@ -10,7 +10,6 @@ import com.ruanmoraes.student_management_api.repositories.StudentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 @Service
 public class StudentService {
@@ -22,19 +21,19 @@ public class StudentService {
         this.studentAssembler = studentAssembler;
     }
 
-    public List<StudentResponseDTO> getAllStudents() {
+    public List<StudentResponseDTO> findAll() {
         return studentRepository.findAll().stream()
                 .map(studentAssembler::toModel)
                 .toList();
     }
 
-    public StudentResponseDTO getStudentById(Long id) throws ResourceNotFoundException {
+    public StudentResponseDTO findById(Long id) throws ResourceNotFoundException {
         Student student = studentRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
 
         return studentAssembler.toModel(student);
     }
 
-    public StudentResponseDTO createStudent(StudentRequestDTO studentRequestDTO) {
+    public StudentResponseDTO create(StudentRequestDTO studentRequestDTO) {
         Student student = StudentMapper.INSTANCE.toModel(studentRequestDTO);
 
         studentRepository.save(student);
@@ -52,9 +51,7 @@ public class StudentService {
         return studentAssembler.toModel(student);
     }
 
-    public List<StudentResponseDTO> listStudentsByLowFrequency(Double frequency) {
-        Logger.getLogger("StudentService").info("Listing students with frequency below " + frequency);
-
+    public List<StudentResponseDTO> listByLowFrequency(Double frequency) {
         return studentRepository.findAll().stream().filter(student -> student.getFrequency() < frequency)
                 .map(studentAssembler::toModel)
                 .toList();
@@ -63,6 +60,6 @@ public class StudentService {
     public void deleteById(Long id) throws ResourceNotFoundException {
         Student student = studentRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
 
-        studentRepository.delete(student);
+        studentRepository.deleteById(student.getId());
     }
 }

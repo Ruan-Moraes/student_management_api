@@ -1,15 +1,17 @@
 package com.ruanmoraes.student_management_api.dtos.request;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 public class EnrollmentRequestDTO {
     private Long id;
-    private StudentRequestDTO student;
-    private DisciplineRequestDTO discipline;
-    private GradeRequestDTO grade;
+    private Long studentId;
+    private Long disciplineId;
+//    private GradeRequestDTO grade;
 }

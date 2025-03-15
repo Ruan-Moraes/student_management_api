@@ -1,26 +1,26 @@
 package com.ruanmoraes.student_management_api.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "tb_grades")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class Grade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private Double gradeValue; // "value" é uma palavra reservada do SQL
+    private Double gradeValue;
 
     @OneToOne
     @JoinColumn(name = "enrollment_id", nullable = false)
-    @JsonIgnore
     private Enrollment enrollment;
 }

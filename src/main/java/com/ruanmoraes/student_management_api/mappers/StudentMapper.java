@@ -12,5 +12,7 @@ public interface StudentMapper {
 
     Student toModel(StudentRequestDTO studentDTO);
 
+    Student toModel(StudentResponseDTO studentDTO);
+
     StudentResponseDTO toDTO(Student student);
 }

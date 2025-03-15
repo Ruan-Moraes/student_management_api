@@ -1,45 +1,72 @@
 package com.ruanmoraes.student_management_api.services;
 
+import com.ruanmoraes.student_management_api.dtos.custom.response.GradeWithStudentAndDisciplineResponseDTO;
+import com.ruanmoraes.student_management_api.dtos.custom.response.StudentGradesResponseDTO;
+import com.ruanmoraes.student_management_api.dtos.request.GradeRequestDTO;
+import com.ruanmoraes.student_management_api.dtos.response.GradeResponseDTO;
+import com.ruanmoraes.student_management_api.exceptions.ResourceAlreadyCreatedException;
+import com.ruanmoraes.student_management_api.mappers.GradeMapper;
+import com.ruanmoraes.student_management_api.mappers.StudentMapper;
+import com.ruanmoraes.student_management_api.models.Enrollment;
+import com.ruanmoraes.student_management_api.models.Grade;
+import com.ruanmoraes.student_management_api.models.Student;
+import com.ruanmoraes.student_management_api.repositories.GradeRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Service
-public class NotaService {
-//    private final NotaRepository notaRepository;
-//
-//    public NotaService(NotaRepository notaRepository) {
-//        this.notaRepository = notaRepository;
-//    }
-//
-//    public List<NotaDTO> buscarTodasNotasAlunos() {
-//        return notaRepository.findAll().stream()
-//                .map(nota -> {
-//                    Long id = nota.getId();
-//                    Long disciplinaId = nota.getMatricula().getDisciplina().getId();
-//                    String nomeAluno = nota.getMatricula().getAluno().getNome();
-//                    String disciplina = nota.getMatricula().getDisciplina().getNome();
-//                    Double valorNota = nota.getValorNota();
-//
-//                    return new NotaDTO(id, disciplinaId, nomeAluno, disciplina, valorNota);
-//                })
-//                .toList();
-//    }
-//
-//    public List<NotaDTO> buscarTodasNotasAlunoPorId(Long alunoId) {
-//        return notaRepository.findAll().stream()
-//                .filter(nota -> nota.getMatricula().getAluno().getId().equals(alunoId))
-//                .map(nota -> {
-//                    Long id = nota.getId();
-//                    Long disciplinaId = nota.getMatricula().getDisciplina().getId();
-//                    String nomeAluno = nota.getMatricula().getAluno().getNome();
-//                    String disciplina = nota.getMatricula().getDisciplina().getNome();
-//                    Double valorNota = nota.getValorNota();
-//
-//                    return new NotaDTO(id, disciplinaId, nomeAluno, disciplina, valorNota);
-//                })
-//                .toList();
-//    }
-//
-//    public Double calcularMediaNotasTodosAlunos() {
+@Slf4j
+public class GradeService {
+    private final GradeRepository gradeRepository;
+    private final StudentService studentService;
+
+    public GradeService(GradeRepository gradeRepository, StudentService studentService) {
+        this.gradeRepository = gradeRepository;
+        this.studentService = studentService;
+    }
+
+    public List<GradeWithStudentAndDisciplineResponseDTO> findAll() {
+        return gradeRepository.findAll().stream()
+                .map(grade -> {
+                    Long id = grade.getId();
+                    String studentName = grade.getEnrollment().getStudent().getName();
+                    String disciplineName = grade.getEnrollment().getDiscipline().getName();
+                    Double gradeValue = grade.getGradeValue();
+
+                    return new
+                            GradeWithStudentAndDisciplineResponseDTO(id, studentName, disciplineName, gradeValue);
+                })
+                .toList();
+    }
+
+    public StudentGradesResponseDTO findAllGradesByStudentId(Long studentId) {
+        Student student = StudentMapper.INSTANCE.toModel(studentService.findById(studentId));
+
+        log.warn(String.valueOf(student));
+
+        String studentName = student.getName();
+        Map<String, Double> grades = new HashMap<>();
+
+        List<Grade> filtedGrades = gradeRepository.findAll().stream()
+                .filter(grade -> grade.getEnrollment().getStudent().getId().equals(studentId)).toList();
+
+        filtedGrades.forEach(grade -> {
+            String disciplineName = grade.getEnrollment().getDiscipline().getName();
+            Double gradeValue = grade.getGradeValue();
+
+            grades.put(disciplineName, gradeValue);
+        });
+
+        log.warn(String.valueOf(new StudentGradesResponseDTO(studentName, grades)));
+
+        return new StudentGradesResponseDTO(studentName, grades);
+    }
+
+    //    public Double calcularMediaNotasTodosAlunos() {
 //        return notaRepository.findAll().stream()
 //                .map(Nota::getValorNota)
 //                .reduce(0.0, Double::sum) / notaRepository.count();
@@ -47,29 +74,29 @@ public class NotaService {
 //
 //    public Double calcularMediaNotasAlunoPorId(Long alunoId) {
 //        int quantidadeDisciplinas = notaRepository.findAll().stream()
-//                .filter(nota -> nota.getMatricula().getAluno().getId().equals(alunoId))
-//                .map(nota -> nota.getMatricula().getDisciplina().getId())
+//                .filter(nota -> nota.getEnrollment().getAluno().getId().equals(alunoId))
+//                .map(nota -> nota.getEnrollment().getDisciplina().getId())
 //                .distinct()
 //                .toList()
 //                .size();
 //
 //
 //        return notaRepository.findAll().stream()
-//                .filter(nota -> nota.getMatricula().getAluno().getId().equals(alunoId))
+//                .filter(nota -> nota.getEnrollment().getAluno().getId().equals(alunoId))
 //                .map(Nota::getValorNota)
 //                .reduce(0.0, Double::sum) / quantidadeDisciplinas;
 //    }
 //
 //    public Double calcularMediaNotasDisciplinaPorId(Long disciplinaId) {
 //        int quantidadeAlunos = notaRepository.findAll().stream()
-//                .filter(nota -> nota.getMatricula().getDisciplina().getId().equals(disciplinaId))
-//                .map(nota -> nota.getMatricula().getAluno().getId())
+//                .filter(nota -> nota.getEnrollment().getDisciplina().getId().equals(disciplinaId))
+//                .map(nota -> nota.getEnrollment().getAluno().getId())
 //                .distinct()
 //                .toList()
 //                .size();
 //
 //        return notaRepository.findAll().stream()
-//                .filter(nota -> nota.getMatricula().getDisciplina().getId().equals(disciplinaId))
+//                .filter(nota -> nota.getEnrollment().getDisciplina().getId().equals(disciplinaId))
 //                .map(Nota::getValorNota)
 //                .reduce(0.0, Double::sum) / quantidadeAlunos;
 //    }
@@ -77,19 +104,19 @@ public class NotaService {
 //    public List<DisciplinaDTO>
 //    calcularMediaTodosAlunosDisciplina() {
 //        int quantidadeDisciplinas = notaRepository.findAll().stream()
-//                .map(nota -> nota.getMatricula().getDisciplina().getId())
+//                .map(nota -> nota.getEnrollment().getDisciplina().getId())
 //                .distinct()
 //                .toList()
 //                .size();
 //
 //        return notaRepository.findAll().stream()
-//                .map(nota -> nota.getMatricula().getDisciplina().getId())
+//                .map(nota -> nota.getEnrollment().getDisciplina().getId())
 //                .distinct()
 //                .map(disciplinaId -> {
 //                    String nomeDisciplina = notaRepository.findAll().stream()
-//                            .filter(nota -> nota.getMatricula().getDisciplina().getId().equals(disciplinaId))
+//                            .filter(nota -> nota.getEnrollment().getDisciplina().getId().equals(disciplinaId))
 //                            .findFirst()
-//                            .map(nota -> nota.getMatricula().getDisciplina().getNome())
+//                            .map(nota -> nota.getEnrollment().getDisciplina().getNome())
 //                            .orElse(null);
 //
 //                    Double mediaDisciplina = calcularMediaNotasDisciplinaPorId(disciplinaId);
@@ -103,13 +130,13 @@ public class NotaService {
 //        Double mediaTurma = calcularMediaNotasTodosAlunos();
 //
 //        return notaRepository.findAll().stream()
-//                .map(nota -> nota.getMatricula().getAluno().getId())
+//                .map(nota -> nota.getEnrollment().getAluno().getId())
 //                .distinct()
 //                .map(alunoId -> {
 //                    String nomeAluno = notaRepository.findAll().stream()
-//                            .filter(nota -> nota.getMatricula().getAluno().getId().equals(alunoId))
+//                            .filter(nota -> nota.getEnrollment().getAluno().getId().equals(alunoId))
 //                            .findFirst()
-//                            .map(nota -> nota.getMatricula().getAluno().getNome())
+//                            .map(nota -> nota.getEnrollment().getAluno().getNome())
 //                            .orElse(null);
 //
 //                    Double mediaAluno = calcularMediaNotasAlunoPorId(alunoId);
@@ -120,40 +147,23 @@ public class NotaService {
 //                .toList();
 //    }
 //
-//    public NotaDTO atualizarNotaPorAlunoIdEDisciplinaId(Long alunoId, Long disciplinaId, NotaDTO notaDTO) {
-//        Nota notaAtualizada = notaRepository.findAll().stream()
-//                .filter(nota -> nota.getMatricula().getAluno().getId().equals(alunoId))
-//                .filter(nota -> nota.getMatricula().getDisciplina().getId().equals(disciplinaId))
-//                .filter(nota -> nota.getValorNota() != notaDTO.getValorNota())
-//                .findFirst()
-//                .orElse(null);
-//
-//        if (notaAtualizada != null) {
-//            double novoValorNota = notaDTO.getValorNota();
-//
-//            System.out.println(novoValorNota);
-//
-//            if (novoValorNota < 0.0) {
-//                novoValorNota = 0.0;
-//            }
-//
-//            if (novoValorNota > 10.0) {
-//                novoValorNota = 10.0;
-//            }
-//
-//            notaAtualizada.setValorNota(novoValorNota);
-//
-//            notaRepository.save(notaAtualizada);
-//
-//            return new NotaDTO(
-//                    notaAtualizada.getId(),
-//                    notaAtualizada.getMatricula().getDisciplina().getId(),
-//                    notaAtualizada.getMatricula().getAluno().getNome(),
-//                    notaAtualizada.getMatricula().getDisciplina().getNome(),
-//                    notaAtualizada.getValorNota()
-//            );
-//        }
-//
-//        return null;
-//    }
+    public GradeResponseDTO create(Enrollment enrollment, GradeRequestDTO gradeRequestDTO) {
+        gradeRepository.findAll().stream()
+                .filter(grade -> grade.getEnrollment().getStudent().getId().equals(enrollment.getStudent().getId()))
+                .filter(grade -> grade.getEnrollment().getDiscipline().getId().equals(enrollment.getDiscipline().getId()))
+                .findAny().ifPresent(
+                        (grade) -> {
+                            throw new ResourceAlreadyCreatedException();
+                        }
+                );
+
+        double newGrade = gradeRequestDTO.getGradeValue();
+
+        Grade grade = new Grade(null,
+                newGrade,
+                enrollment
+        );
+
+        return GradeMapper.INSTANCE.toDTO(gradeRepository.save(grade));
+    }
 }

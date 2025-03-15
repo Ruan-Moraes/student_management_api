@@ -18,32 +18,24 @@ public class DisciplineController {
         this.disciplineService = disciplineService;
     }
 
-    @GetMapping(value = "/", produces = "application/json")
-    public ResponseEntity<List<DisciplineResponseDTO>> getAllDisciplines() {
-        List<DisciplineResponseDTO> disciplines = disciplineService.getAllDisciplines();
-
-        return ResponseEntity.status(200).body(disciplines);
+    @GetMapping(produces = "application/json")
+    public ResponseEntity<List<DisciplineResponseDTO>> findAll() {
+        return ResponseEntity.status(200).body(disciplineService.findAll());
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
-    public ResponseEntity<DisciplineResponseDTO> getById(@PathVariable Long id) {
-        DisciplineResponseDTO discipline = disciplineService.getById(id);
-
-        return ResponseEntity.status(200).body(discipline);
+    public ResponseEntity<DisciplineResponseDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.status(200).body(disciplineService.findById(id));
     }
 
-    @PostMapping(value = "/", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<DisciplineResponseDTO> createDiscipline(@Valid @RequestBody DisciplineRequestDTO disciplineRequestDTO) {
-        DisciplineResponseDTO discipline = disciplineService.createDiscipline(disciplineRequestDTO);
-
-        return ResponseEntity.status(201).body(discipline);
+    @PostMapping(consumes = "application/json", produces = "application/json")
+    public ResponseEntity<DisciplineResponseDTO> create(@Valid @RequestBody DisciplineRequestDTO disciplineRequestDTO) {
+        return ResponseEntity.status(201).body(disciplineService.create(disciplineRequestDTO));
     }
 
-    @PutMapping(value = "/", consumes = "application/json", produces = "application/json")
+    @PutMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<DisciplineResponseDTO> updateById(@Valid @RequestBody DisciplineRequestDTO disciplineRequestDTO) {
-        DisciplineResponseDTO discipline = disciplineService.updateById(disciplineRequestDTO);
-
-        return ResponseEntity.status(200).body(discipline);
+        return ResponseEntity.status(200).body(disciplineService.updateById(disciplineRequestDTO));
     }
 
     @DeleteMapping(value = "/{id}")

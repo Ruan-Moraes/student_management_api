@@ -2,14 +2,16 @@ package com.ruanmoraes.student_management_api.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "tb_enrollments", uniqueConstraints = @UniqueConstraint(columnNames = {"student_id", "discipline_id"}))
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class Enrollment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

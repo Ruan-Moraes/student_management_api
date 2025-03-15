@@ -20,10 +20,10 @@ public class StudentAssembler extends RepresentationModelAssemblerSupport<Studen
     public StudentResponseDTO toModel(Student entity) {
         StudentResponseDTO studentResponseDTO = StudentMapper.INSTANCE.toDTO(entity);
 
-        studentResponseDTO.add(linkTo(methodOn(StudentController.class).getStudentById(studentResponseDTO.getId())).withSelfRel().withType("GET"));
-        studentResponseDTO.add(linkTo(methodOn(StudentController.class).getAllStudents()).withRel("FindAll").withType("GET"));
-        studentResponseDTO.add(linkTo(methodOn(StudentController.class).listStudentsByLowFrequency(studentResponseDTO.getFrequency())).withRel("ListByLowFrequency").withType("GET"));
-        studentResponseDTO.add(linkTo(methodOn(StudentController.class).createStudent(null)).withRel("Create").withType("POST"));
+        studentResponseDTO.add(linkTo(methodOn(StudentController.class).findById(studentResponseDTO.getId())).withSelfRel().withType("GET"));
+        studentResponseDTO.add(linkTo(methodOn(StudentController.class).findAll()).withRel("FindAll").withType("GET"));
+        studentResponseDTO.add(linkTo(methodOn(StudentController.class).findByLowFrequency(studentResponseDTO.getFrequency())).withRel("ListByLowFrequency").withType("GET"));
+        studentResponseDTO.add(linkTo(methodOn(StudentController.class).create(null)).withRel("Create").withType("POST"));
         studentResponseDTO.add(linkTo(methodOn(StudentController.class).updateById(null)).withRel("Update").withType("PUT"));
         studentResponseDTO.add(linkTo(methodOn(StudentController.class).deleteById(studentResponseDTO.getId())).withRel("Delete").withType("DELETE"));
 

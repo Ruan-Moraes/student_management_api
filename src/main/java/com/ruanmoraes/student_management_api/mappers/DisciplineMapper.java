@@ -12,5 +12,7 @@ public interface DisciplineMapper {
 
     Discipline toModel(DisciplineRequestDTO disciplineDTO);
 
+    Discipline toModel(DisciplineResponseDTO disciplineDTO);
+
     DisciplineResponseDTO toDTO(Discipline discipline);
 }

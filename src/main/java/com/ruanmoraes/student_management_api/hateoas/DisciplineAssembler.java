@@ -20,9 +20,9 @@ public class DisciplineAssembler extends RepresentationModelAssemblerSupport<Dis
     public DisciplineResponseDTO toModel(Discipline entity) {
         DisciplineResponseDTO disciplineResponseDTO = DisciplineMapper.INSTANCE.toDTO(entity);
 
-        disciplineResponseDTO.add(linkTo(methodOn(DisciplineController.class).getById(entity.getId())).withSelfRel().withType("GET"));
-        disciplineResponseDTO.add(linkTo(methodOn(DisciplineController.class).getAllDisciplines()).withRel("FindAll").withType("GET"));
-        disciplineResponseDTO.add(linkTo(methodOn(DisciplineController.class).createDiscipline(null)).withRel("Create").withType("POST"));
+        disciplineResponseDTO.add(linkTo(methodOn(DisciplineController.class).findById(entity.getId())).withSelfRel().withType("GET"));
+        disciplineResponseDTO.add(linkTo(methodOn(DisciplineController.class).findAll()).withRel("FindAll").withType("GET"));
+        disciplineResponseDTO.add(linkTo(methodOn(DisciplineController.class).create(null)).withRel("Create").withType("POST"));
         disciplineResponseDTO.add(linkTo(methodOn(DisciplineController.class).updateById(null)).withRel("Update").withType("PUT"));
         disciplineResponseDTO.add(linkTo(methodOn(DisciplineController.class).deleteById(entity.getId())).withRel("Delete").withType("DELETE"));
 

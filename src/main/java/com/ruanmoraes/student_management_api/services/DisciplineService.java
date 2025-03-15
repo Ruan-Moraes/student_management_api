@@ -21,19 +21,19 @@ public class DisciplineService {
         this.disciplineAssembler = disciplineAssembler;
     }
 
-    public List<DisciplineResponseDTO> getAllDisciplines() {
+    public List<DisciplineResponseDTO> findAll() {
         return disciplineRepository.findAll().stream()
                 .map(disciplineAssembler::toModel)
                 .toList();
     }
 
-    public DisciplineResponseDTO getById(Long id) throws ResourceNotFoundException {
+    public DisciplineResponseDTO findById(Long id) throws ResourceNotFoundException {
         Discipline discipline = disciplineRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
 
         return disciplineAssembler.toModel(discipline);
     }
 
-    public DisciplineResponseDTO createDiscipline(DisciplineRequestDTO disciplineRequestDTO) {
+    public DisciplineResponseDTO create(DisciplineRequestDTO disciplineRequestDTO) {
         Discipline discipline = DisciplineMapper.INSTANCE.toModel(disciplineRequestDTO);
 
         disciplineRepository.save(discipline);
@@ -53,6 +53,6 @@ public class DisciplineService {
     public void deleteById(Long id) throws ResourceNotFoundException {
         Discipline discipline = disciplineRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
 
-        disciplineRepository.delete(discipline);
+        disciplineRepository.deleteById(discipline.getId());
     }
 }
