@@ -33,13 +33,12 @@ public class StudentController {
         return ResponseEntity.status(201).body(studentService.create(studentRequestDTO));
     }
 
-
     @PutMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<StudentResponseDTO> updateById(@Valid @RequestBody StudentRequestDTO studentRequestDTO) {
         return ResponseEntity.status(200).body(studentService.updateById(studentRequestDTO));
     }
 
-    @GetMapping(value = "/low-frequency")
+    @GetMapping(value = "/lowFrequency")
     public ResponseEntity<List<StudentResponseDTO>> findByLowFrequency(@RequestParam("frequency_below") Double frequency) {
         return ResponseEntity.status(200).body(studentService.listByLowFrequency(frequency));
     }

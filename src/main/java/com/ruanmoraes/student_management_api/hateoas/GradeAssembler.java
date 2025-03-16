@@ -19,6 +19,12 @@ public class GradeAssembler extends RepresentationModelAssemblerSupport<Grade, G
         GradeResponseDTO gradeResponseDTO = GradeMapper.INSTANCE.toDTO(entity);
 
         gradeResponseDTO.add(linkTo(methodOn(GradeController.class).findAll()).withRel("FindAll").withType("GET"));
+        gradeResponseDTO.add(linkTo(methodOn(GradeController.class).findAllGradesByStudentId(null)).withRel("FindAllGradesByStudentId").withType("GET"));
+        gradeResponseDTO.add(linkTo(methodOn(GradeController.class).calculateAverageAllGrade()).withRel("CalculateAverageAllGrade").withType("GET"));
+        gradeResponseDTO.add(linkTo(methodOn(GradeController.class).calculateAvarageAllGradeByDiscipline()).withRel("CalculateAvarageAllGradeByDiscipline").withType("GET"));
+        gradeResponseDTO.add(linkTo(methodOn(GradeController.class).averageGradeByStudentId(null)).withRel("AverageGradeByStudentId").withType("GET"));
+        gradeResponseDTO.add(linkTo(methodOn(GradeController.class).findAboveAverageStudents()).withRel("FindAboveAverageStudents").withType("GET"));
+        gradeResponseDTO.add(linkTo(methodOn(GradeController.class).create(null, null, null)).withRel("Create").withType("POST"));
 
         return gradeResponseDTO;
     }

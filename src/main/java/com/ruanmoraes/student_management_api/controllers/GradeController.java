@@ -1,11 +1,12 @@
 package com.ruanmoraes.student_management_api.controllers;
 
+import com.ruanmoraes.student_management_api.dtos.custom.response.AvarageByDisciplineResponseDTO;
+import com.ruanmoraes.student_management_api.dtos.custom.response.AvarageResponseDTO;
 import com.ruanmoraes.student_management_api.dtos.custom.response.GradeWithStudentAndDisciplineResponseDTO;
 import com.ruanmoraes.student_management_api.dtos.custom.response.StudentGradesResponseDTO;
 import com.ruanmoraes.student_management_api.dtos.request.GradeRequestDTO;
+import com.ruanmoraes.student_management_api.dtos.response.EnrollmentResponseDTO;
 import com.ruanmoraes.student_management_api.dtos.response.GradeResponseDTO;
-import com.ruanmoraes.student_management_api.mappers.EnrollmentMapper;
-import com.ruanmoraes.student_management_api.models.Enrollment;
 import com.ruanmoraes.student_management_api.services.EnrollmentService;
 import com.ruanmoraes.student_management_api.services.GradeService;
 import jakarta.validation.Valid;
@@ -30,49 +31,40 @@ public class GradeController {
         return ResponseEntity.status(200).body(gradeService.findAll());
     }
 
-    @GetMapping("/{studentId}")
+    @GetMapping(value = "/{studentId}", produces = "application/json")
     public ResponseEntity<StudentGradesResponseDTO> findAllGradesByStudentId(@PathVariable Long studentId) {
         return ResponseEntity.status(200).body(gradeService.findAllGradesByStudentId(studentId));
     }
 
-    //
-//    @GetMapping("/media-todos-alunos")
-//    public ResponseEntity<Double> calcularMediaNotasTodosAlunos() {
-//        Double media = notaService.calcularMediaNotasTodosAlunos();
-//
-//        return ResponseEntity.ok(media);
-//    }
-//
-//    @GetMapping("/media/{alunoId}")
-//    public ResponseEntity<Double> calcularMediaNotasAlunoPorId(@PathVariable Long alunoId) {
-//        Double media = notaService.calcularMediaNotasAlunoPorId(alunoId);
-//
-//        return ResponseEntity.ok(media);
-//    }
-//
-//    @GetMapping("/media-todos-alunos-disciplina/")
-//    public ResponseEntity<List<DisciplinaDTO>> calcularMediaNotasTodosAlunosDisciplina() {
-//        List<DisciplinaDTO> disciplinas = notaService.calcularMediaTodosAlunosDisciplina();
-//
-//        return ResponseEntity.ok(disciplinas);
-//    }
-//
-//    @GetMapping("/alunos-acima-media-turma")
-//    public List<StudentGradesView> buscarAlunosAcimaMediaTurma() {
-//        return notaService.buscarAlunosAcimaMediaTurma();
-//    }
-//
+    @GetMapping(value = "/calculateAverageAllGrade", produces = "application/json")
+    public ResponseEntity<AvarageResponseDTO> calculateAverageAllGrade() {
+        return ResponseEntity.status(200).body(gradeService.calculateAverageAllGrade());
+    }
+
+    @GetMapping(value = "/calculateAvarageAllGradeByDiscipline", produces = "application/json")
+    public ResponseEntity<AvarageByDisciplineResponseDTO> calculateAvarageAllGradeByDiscipline() {
+        return ResponseEntity.status(200).body(gradeService.calculateAvarageAllGradeByDiscipline());
+    }
+
+    @GetMapping(value = "/avarage/{studentId}", produces = "application/json")
+    public ResponseEntity<AvarageResponseDTO> averageGradeByStudentId(@PathVariable Long studentId) {
+        return ResponseEntity.status(200).body(gradeService.averageGradeByStudentId(studentId));
+    }
+
+    @GetMapping(value = "/findAboveAverageStudents", produces = "application/json")
+    public ResponseEntity<List<GradeWithStudentAndDisciplineResponseDTO>> findAboveAverageStudents() {
+        return ResponseEntity.status(200).body(gradeService.findAboveAverageStudents());
+    }
+
     @PostMapping(produces = "application/json", consumes = "application/json")
     public ResponseEntity<GradeResponseDTO> create
-    (
-            @RequestParam(value = "studentId", required = true) Long studentId,
-            @RequestParam(value = "disciplineId", required = true) Long disciplineId,
-            @Valid @RequestBody GradeRequestDTO gradeRequestDTO
-    ) {
-        Enrollment enrollment = EnrollmentMapper.INSTANCE.toModel(enrollmentService.findByStudentIdAndDisciplineId(studentId, disciplineId));
+            (
+                    @RequestParam(value = "studentId", required = true) Long studentId,
+                    @RequestParam(value = "disciplineId", required = true) Long disciplineId,
+                    @Valid @RequestBody GradeRequestDTO gradeRequestDTO
+            ) {
+        EnrollmentResponseDTO enrollmentResponseDTO = enrollmentService.findByStudentIdAndDisciplineId(studentId, disciplineId);
 
-        GradeResponseDTO gradeResponseDTO = gradeService.create(enrollment, gradeRequestDTO);
-
-        return ResponseEntity.status(201).body(gradeResponseDTO);
+        return ResponseEntity.status(201).body(gradeService.create(enrollmentResponseDTO, gradeRequestDTO));
     }
 }

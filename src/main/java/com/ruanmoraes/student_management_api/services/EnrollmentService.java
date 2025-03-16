@@ -42,12 +42,12 @@ public class EnrollmentService {
     }
 
     public EnrollmentResponseDTO findByStudentIdAndDisciplineId(Long studentId, Long disciplineId) throws ResourceNotFoundException {
-        Student student = StudentMapper.INSTANCE.toModel(studentService.findById(studentId));
-        Discipline discipline = DisciplineMapper.INSTANCE.toModel(disciplineService.findById(disciplineId));
+        studentService.findById(studentId);
+        disciplineService.findById(disciplineId);
 
         return enrollmentRepository.findAll().stream()
-                .filter(e -> e.getStudent().getId().equals(student.getId()))
-                .filter(e -> e.getDiscipline().getId().equals(discipline.getId()))
+                .filter(e -> e.getStudent().getId().equals(studentId))
+                .filter(e -> e.getDiscipline().getId().equals(disciplineId))
                 .findFirst()
                 .map(enrollmentAssembler::toModel)
                 .orElseThrow(ResourceNotFoundException::new);
@@ -57,13 +57,12 @@ public class EnrollmentService {
         Student student = StudentMapper.INSTANCE.toModel(studentService.findById(enrollmentRequestDTO.getStudentId()));
         Discipline discipline = DisciplineMapper.INSTANCE.toModel(disciplineService.findById(enrollmentRequestDTO.getDisciplineId()));
 
-        enrollmentRepository.findAll().stream()
-                .filter(e -> e.getStudent().getId().equals(student.getId()))
-                .filter(e -> e.getDiscipline().getId().equals(discipline.getId()))
-                .findFirst()
-                .ifPresent((e) -> {
-                    throw new ResourceAlreadyCreatedException();
-                });
+        if (enrollmentRepository.findAll().stream()
+                .anyMatch(e ->
+                        e.getStudent().getId().equals(student.getId()) && e.getDiscipline().getId().equals(discipline.getId())
+                )) {
+            throw new ResourceAlreadyCreatedException();
+        }
 
         Enrollment enrollment = new Enrollment(
                 null,
@@ -82,15 +81,4 @@ public class EnrollmentService {
 
         enrollmentRepository.deleteById(id);
     }
-
-//
-//    public boolean removerMatricula(Long id) {
-//        if (matriculaRepository.existsById(id)) {
-//            matriculaRepository.deleteById(id);
-//
-//            return true;
-//        }
-//
-//        return false;
-//    }
 }

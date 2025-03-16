@@ -1,10 +1,15 @@
 package com.ruanmoraes.student_management_api.services;
 
+import com.ruanmoraes.student_management_api.dtos.custom.response.AvarageByDisciplineResponseDTO;
+import com.ruanmoraes.student_management_api.dtos.custom.response.AvarageResponseDTO;
 import com.ruanmoraes.student_management_api.dtos.custom.response.GradeWithStudentAndDisciplineResponseDTO;
 import com.ruanmoraes.student_management_api.dtos.custom.response.StudentGradesResponseDTO;
 import com.ruanmoraes.student_management_api.dtos.request.GradeRequestDTO;
+import com.ruanmoraes.student_management_api.dtos.response.DisciplineResponseDTO;
+import com.ruanmoraes.student_management_api.dtos.response.EnrollmentResponseDTO;
 import com.ruanmoraes.student_management_api.dtos.response.GradeResponseDTO;
 import com.ruanmoraes.student_management_api.exceptions.ResourceAlreadyCreatedException;
+import com.ruanmoraes.student_management_api.mappers.EnrollmentMapper;
 import com.ruanmoraes.student_management_api.mappers.GradeMapper;
 import com.ruanmoraes.student_management_api.mappers.StudentMapper;
 import com.ruanmoraes.student_management_api.models.Enrollment;
@@ -23,10 +28,12 @@ import java.util.Map;
 public class GradeService {
     private final GradeRepository gradeRepository;
     private final StudentService studentService;
+    private final DisciplineService disciplinesService;
 
-    public GradeService(GradeRepository gradeRepository, StudentService studentService) {
+    public GradeService(GradeRepository gradeRepository, StudentService studentService, DisciplineService disciplinesService) {
         this.gradeRepository = gradeRepository;
         this.studentService = studentService;
+        this.disciplinesService = disciplinesService;
     }
 
     public List<GradeWithStudentAndDisciplineResponseDTO> findAll() {
@@ -46,8 +53,6 @@ public class GradeService {
     public StudentGradesResponseDTO findAllGradesByStudentId(Long studentId) {
         Student student = StudentMapper.INSTANCE.toModel(studentService.findById(studentId));
 
-        log.warn(String.valueOf(student));
-
         String studentName = student.getName();
         Map<String, Double> grades = new HashMap<>();
 
@@ -61,109 +66,80 @@ public class GradeService {
             grades.put(disciplineName, gradeValue);
         });
 
-        log.warn(String.valueOf(new StudentGradesResponseDTO(studentName, grades)));
-
         return new StudentGradesResponseDTO(studentName, grades);
     }
 
-    //    public Double calcularMediaNotasTodosAlunos() {
-//        return notaRepository.findAll().stream()
-//                .map(Nota::getValorNota)
-//                .reduce(0.0, Double::sum) / notaRepository.count();
-//    }
-//
-//    public Double calcularMediaNotasAlunoPorId(Long alunoId) {
-//        int quantidadeDisciplinas = notaRepository.findAll().stream()
-//                .filter(nota -> nota.getEnrollment().getAluno().getId().equals(alunoId))
-//                .map(nota -> nota.getEnrollment().getDisciplina().getId())
-//                .distinct()
-//                .toList()
-//                .size();
-//
-//
-//        return notaRepository.findAll().stream()
-//                .filter(nota -> nota.getEnrollment().getAluno().getId().equals(alunoId))
-//                .map(Nota::getValorNota)
-//                .reduce(0.0, Double::sum) / quantidadeDisciplinas;
-//    }
-//
-//    public Double calcularMediaNotasDisciplinaPorId(Long disciplinaId) {
-//        int quantidadeAlunos = notaRepository.findAll().stream()
-//                .filter(nota -> nota.getEnrollment().getDisciplina().getId().equals(disciplinaId))
-//                .map(nota -> nota.getEnrollment().getAluno().getId())
-//                .distinct()
-//                .toList()
-//                .size();
-//
-//        return notaRepository.findAll().stream()
-//                .filter(nota -> nota.getEnrollment().getDisciplina().getId().equals(disciplinaId))
-//                .map(Nota::getValorNota)
-//                .reduce(0.0, Double::sum) / quantidadeAlunos;
-//    }
-//
-//    public List<DisciplinaDTO>
-//    calcularMediaTodosAlunosDisciplina() {
-//        int quantidadeDisciplinas = notaRepository.findAll().stream()
-//                .map(nota -> nota.getEnrollment().getDisciplina().getId())
-//                .distinct()
-//                .toList()
-//                .size();
-//
-//        return notaRepository.findAll().stream()
-//                .map(nota -> nota.getEnrollment().getDisciplina().getId())
-//                .distinct()
-//                .map(disciplinaId -> {
-//                    String nomeDisciplina = notaRepository.findAll().stream()
-//                            .filter(nota -> nota.getEnrollment().getDisciplina().getId().equals(disciplinaId))
-//                            .findFirst()
-//                            .map(nota -> nota.getEnrollment().getDisciplina().getNome())
-//                            .orElse(null);
-//
-//                    Double mediaDisciplina = calcularMediaNotasDisciplinaPorId(disciplinaId);
-//
-//                    return new DisciplinaDTO(disciplinaId, nomeDisciplina, mediaDisciplina);
-//                })
-//                .toList();
-//    }
-//
-//    public List<StudentGradesView> buscarAlunosAcimaMediaTurma() {
-//        Double mediaTurma = calcularMediaNotasTodosAlunos();
-//
-//        return notaRepository.findAll().stream()
-//                .map(nota -> nota.getEnrollment().getAluno().getId())
-//                .distinct()
-//                .map(alunoId -> {
-//                    String nomeAluno = notaRepository.findAll().stream()
-//                            .filter(nota -> nota.getEnrollment().getAluno().getId().equals(alunoId))
-//                            .findFirst()
-//                            .map(nota -> nota.getEnrollment().getAluno().getNome())
-//                            .orElse(null);
-//
-//                    Double mediaAluno = calcularMediaNotasAlunoPorId(alunoId);
-//
-//                    return new StudentGradesView(nomeAluno, mediaAluno);
-//                })
-//                .filter(studentGradesView -> studentGradesView.getMedia() > mediaTurma)
-//                .toList();
-//    }
-//
-    public GradeResponseDTO create(Enrollment enrollment, GradeRequestDTO gradeRequestDTO) {
+    public AvarageResponseDTO calculateAverageAllGrade() {
+        Long totalGrades = gradeRepository.count();
+
+        return new AvarageResponseDTO(gradeRepository
+                .findAll().stream()
+                .map(Grade::getGradeValue)
+                .reduce(0.0, Double::sum) / totalGrades);
+    }
+
+    public AvarageResponseDTO averageGradeByStudentId(Long studentId) {
+        StudentGradesResponseDTO studentGrades = findAllGradesByStudentId(studentId);
+
+        Double grades = studentGrades.getGrades().values().stream()
+                .reduce(0.0, Double::sum) / studentGrades.getGrades().size();
+
+        return new AvarageResponseDTO(grades);
+    }
+
+    public AvarageByDisciplineResponseDTO calculateAvarageAllGradeByDiscipline() {
+        Map<String, Double> avarageByDiscipline = new HashMap<>();
+
+        List<String> disciplines = disciplinesService.findAll().stream()
+                .map(DisciplineResponseDTO::getName)
+                .toList();
+
+        disciplines.forEach(disciplineName -> {
+            Integer totalGradesByDiscipline = gradeRepository.findAll().stream()
+                    .filter(grade -> grade.getEnrollment().getDiscipline().getName().equals(disciplineName)).toList().size();
+
+            Double averageByDiscipline = gradeRepository.findAll().stream()
+                    .filter(grade -> grade.getEnrollment().getDiscipline().getName().equals(disciplineName))
+                    .map(Grade::getGradeValue)
+                    .reduce(0.0, Double::sum) / totalGradesByDiscipline;
+
+            avarageByDiscipline.put(disciplineName, averageByDiscipline);
+        });
+
+        return new AvarageByDisciplineResponseDTO(avarageByDiscipline);
+    }
+
+
+    public List<GradeWithStudentAndDisciplineResponseDTO> findAboveAverageStudents() {
+        Double average = calculateAverageAllGrade().getAverage();
+
+        return gradeRepository.findAll().stream()
+                .filter(grade -> grade.getGradeValue() > average)
+                .map(grade -> {
+                    Long studentId = grade.getEnrollment().getStudent().getId();
+                    String studentName = grade.getEnrollment().getStudent().getName();
+                    String disciplineName = grade.getEnrollment().getDiscipline().getName();
+                    Double gradeValue = grade.getGradeValue();
+
+                    return new GradeWithStudentAndDisciplineResponseDTO(studentId, studentName, disciplineName, gradeValue);
+                })
+                .toList();
+
+    }
+
+    public GradeResponseDTO create(EnrollmentResponseDTO enrollmentResponseDTO, GradeRequestDTO gradeRequestDTO) {
         gradeRepository.findAll().stream()
-                .filter(grade -> grade.getEnrollment().getStudent().getId().equals(enrollment.getStudent().getId()))
-                .filter(grade -> grade.getEnrollment().getDiscipline().getId().equals(enrollment.getDiscipline().getId()))
+                .filter(grade -> grade.getEnrollment().getStudent().getId().equals(enrollmentResponseDTO.getStudentId()))
+                .filter(grade -> grade.getEnrollment().getDiscipline().getId().equals(enrollmentResponseDTO.getDisciplineId()))
                 .findAny().ifPresent(
                         (grade) -> {
                             throw new ResourceAlreadyCreatedException();
                         }
                 );
 
-        double newGrade = gradeRequestDTO.getGradeValue();
+        Double gradeValue = gradeRequestDTO.getGradeValue();
+        Enrollment enrollment = EnrollmentMapper.INSTANCE.toModel(enrollmentResponseDTO);
 
-        Grade grade = new Grade(null,
-                newGrade,
-                enrollment
-        );
-
-        return GradeMapper.INSTANCE.toDTO(gradeRepository.save(grade));
+        return GradeMapper.INSTANCE.toDTO(gradeRepository.save(new Grade(null, gradeValue, enrollment)));
     }
 }
