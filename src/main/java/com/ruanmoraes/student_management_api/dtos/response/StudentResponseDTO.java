@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 
-import java.util.List;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -16,5 +14,4 @@ public class StudentResponseDTO extends RepresentationModel<StudentResponseDTO> 
     private Long id;
     private String name;
     private Double frequency;
-    private List<EnrollmentResponseDTO> enrollments;
 }

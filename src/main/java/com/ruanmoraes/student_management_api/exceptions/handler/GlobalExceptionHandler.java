@@ -17,9 +17,10 @@ import java.util.Date;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
-    public final ResponseEntity<?> handleResourceNotFoundException(Exception e, WebRequest request) {
+    public final ResponseEntity<ExceptionResponse> handleResourceNotFoundException(Exception e, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 new Date().toString(),
+                String.valueOf(404),
                 e.getClass().getSimpleName(),
                 e.getMessage(),
                 request.getDescription(false)
@@ -29,9 +30,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ResourceAlreadyCreatedException.class)
-    public final ResponseEntity<?> EnrollmentCreatedAlreadyException(Exception e, WebRequest request) {
+    public final ResponseEntity<ExceptionResponse> EnrollmentCreatedAlreadyException(Exception e, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 new Date().toString(),
+                String.valueOf(400),
                 e.getClass().getSimpleName(),
                 e.getMessage(),
                 request.getDescription(false)
@@ -41,9 +43,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public final ResponseEntity<?> handleAllExceptions(Exception e, WebRequest request) {
+    public final ResponseEntity<ExceptionResponse> handleAllExceptions(Exception e, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 new Date().toString(),
+                String.valueOf(500),
                 e.getClass().getSimpleName(),
                 e.getMessage(),
                 request.getDescription(false)

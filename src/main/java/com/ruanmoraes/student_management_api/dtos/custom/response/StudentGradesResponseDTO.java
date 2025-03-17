@@ -9,6 +9,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Getter
 public class StudentGradesResponseDTO extends RepresentationModel<StudentGradesResponseDTO> {
+    private Long studentId;
     private String studentName;
     private Map<String, Double> grades;
 }

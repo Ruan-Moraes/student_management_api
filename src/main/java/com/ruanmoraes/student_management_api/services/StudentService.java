@@ -7,11 +7,13 @@ import com.ruanmoraes.student_management_api.hateoas.StudentAssembler;
 import com.ruanmoraes.student_management_api.mappers.StudentMapper;
 import com.ruanmoraes.student_management_api.models.Student;
 import com.ruanmoraes.student_management_api.repositories.StudentRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class StudentService {
     private final StudentRepository studentRepository;
     private final StudentAssembler studentAssembler;

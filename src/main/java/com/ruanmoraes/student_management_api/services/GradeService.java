@@ -8,15 +8,17 @@ import com.ruanmoraes.student_management_api.dtos.request.GradeRequestDTO;
 import com.ruanmoraes.student_management_api.dtos.response.DisciplineResponseDTO;
 import com.ruanmoraes.student_management_api.dtos.response.EnrollmentResponseDTO;
 import com.ruanmoraes.student_management_api.dtos.response.GradeResponseDTO;
+import com.ruanmoraes.student_management_api.dtos.response.StudentResponseDTO;
 import com.ruanmoraes.student_management_api.exceptions.ResourceAlreadyCreatedException;
+import com.ruanmoraes.student_management_api.hateoas.GradeAssembler;
+import com.ruanmoraes.student_management_api.hateoas.custom.AvarageAssembler;
+import com.ruanmoraes.student_management_api.hateoas.custom.AvarageByDisciplineAssembler;
+import com.ruanmoraes.student_management_api.hateoas.custom.GradeWithStudentAndDisciplineAssembler;
+import com.ruanmoraes.student_management_api.hateoas.custom.StudentGradesAssembler;
 import com.ruanmoraes.student_management_api.mappers.EnrollmentMapper;
-import com.ruanmoraes.student_management_api.mappers.GradeMapper;
-import com.ruanmoraes.student_management_api.mappers.StudentMapper;
 import com.ruanmoraes.student_management_api.models.Enrollment;
 import com.ruanmoraes.student_management_api.models.Grade;
-import com.ruanmoraes.student_management_api.models.Student;
 import com.ruanmoraes.student_management_api.repositories.GradeRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -24,14 +26,33 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Slf4j
 public class GradeService {
     private final GradeRepository gradeRepository;
+    private final GradeAssembler gradeAssembler;
+
+    private final AvarageAssembler avarageAssembler;
+    private final AvarageByDisciplineAssembler avarageByDisciplineAssembler;
+    private final GradeWithStudentAndDisciplineAssembler gradeWithStudentAndDisciplineAssembler;
+    private final StudentGradesAssembler studentGradesAssembler;
+
     private final StudentService studentService;
     private final DisciplineService disciplinesService;
 
-    public GradeService(GradeRepository gradeRepository, StudentService studentService, DisciplineService disciplinesService) {
+    public GradeService(GradeRepository gradeRepository,
+                        GradeAssembler gradeAssembler,
+                        AvarageAssembler avarageAssembler,
+                        AvarageByDisciplineAssembler avarageByDisciplineAssembler,
+                        GradeWithStudentAndDisciplineAssembler gradeWithStudentAndDisciplineAssembler,
+                        StudentGradesAssembler studentGradesAssembler,
+                        StudentService studentService, DisciplineService disciplinesService) {
         this.gradeRepository = gradeRepository;
+        this.gradeAssembler = gradeAssembler;
+
+        this.avarageAssembler = avarageAssembler;
+        this.avarageByDisciplineAssembler = avarageByDisciplineAssembler;
+        this.gradeWithStudentAndDisciplineAssembler = gradeWithStudentAndDisciplineAssembler;
+        this.studentGradesAssembler = studentGradesAssembler;
+
         this.studentService = studentService;
         this.disciplinesService = disciplinesService;
     }
@@ -39,25 +60,26 @@ public class GradeService {
     public List<GradeWithStudentAndDisciplineResponseDTO> findAll() {
         return gradeRepository.findAll().stream()
                 .map(grade -> {
-                    Long id = grade.getId();
+                    Long studentId = grade.getEnrollment().getStudent().getId();
                     String studentName = grade.getEnrollment().getStudent().getName();
                     String disciplineName = grade.getEnrollment().getDiscipline().getName();
                     Double gradeValue = grade.getGradeValue();
 
-                    return new
-                            GradeWithStudentAndDisciplineResponseDTO(id, studentName, disciplineName, gradeValue);
+                    return new GradeWithStudentAndDisciplineResponseDTO(studentId, studentName, disciplineName, gradeValue);
                 })
-                .toList();
+                .map(gradeWithStudentAndDisciplineAssembler::toModel).toList();
     }
 
     public StudentGradesResponseDTO findAllGradesByStudentId(Long studentId) {
-        Student student = StudentMapper.INSTANCE.toModel(studentService.findById(studentId));
+        StudentResponseDTO studentResponseDTO = studentService.findById(studentId);
 
-        String studentName = student.getName();
+        String studentName = studentResponseDTO.getName();
         Map<String, Double> grades = new HashMap<>();
 
         List<Grade> filtedGrades = gradeRepository.findAll().stream()
-                .filter(grade -> grade.getEnrollment().getStudent().getId().equals(studentId)).toList();
+                .filter(grade -> grade.getEnrollment().getStudent().getId().equals(studentId))
+                .toList();
+
 
         filtedGrades.forEach(grade -> {
             String disciplineName = grade.getEnrollment().getDiscipline().getName();
@@ -66,25 +88,32 @@ public class GradeService {
             grades.put(disciplineName, gradeValue);
         });
 
-        return new StudentGradesResponseDTO(studentName, grades);
+        StudentGradesResponseDTO studentGradesResponseDTO = new StudentGradesResponseDTO(studentId, studentName, grades);
+
+        return studentGradesAssembler.toModel(studentGradesResponseDTO);
     }
 
     public AvarageResponseDTO calculateAverageAllGrade() {
         Long totalGrades = gradeRepository.count();
 
-        return new AvarageResponseDTO(gradeRepository
+        AvarageResponseDTO avarageResponseDTO = new AvarageResponseDTO(gradeRepository
                 .findAll().stream()
                 .map(Grade::getGradeValue)
                 .reduce(0.0, Double::sum) / totalGrades);
+
+        return avarageAssembler.toModel(avarageResponseDTO);
     }
 
     public AvarageResponseDTO averageGradeByStudentId(Long studentId) {
         StudentGradesResponseDTO studentGrades = findAllGradesByStudentId(studentId);
 
-        Double grades = studentGrades.getGrades().values().stream()
-                .reduce(0.0, Double::sum) / studentGrades.getGrades().size();
+        AvarageResponseDTO avarageResponseDTO = new AvarageResponseDTO(studentGrades
+                .getGrades()
+                .values()
+                .stream()
+                .reduce(0.0, Double::sum) / studentGrades.getGrades().size());
 
-        return new AvarageResponseDTO(grades);
+        return avarageAssembler.toModel(avarageResponseDTO);
     }
 
     public AvarageByDisciplineResponseDTO calculateAvarageAllGradeByDiscipline() {
@@ -93,6 +122,7 @@ public class GradeService {
         List<String> disciplines = disciplinesService.findAll().stream()
                 .map(DisciplineResponseDTO::getName)
                 .toList();
+
 
         disciplines.forEach(disciplineName -> {
             Integer totalGradesByDiscipline = gradeRepository.findAll().stream()
@@ -106,7 +136,7 @@ public class GradeService {
             avarageByDiscipline.put(disciplineName, averageByDiscipline);
         });
 
-        return new AvarageByDisciplineResponseDTO(avarageByDiscipline);
+        return avarageByDisciplineAssembler.toModel(new AvarageByDisciplineResponseDTO(avarageByDiscipline));
     }
 
 
@@ -123,8 +153,8 @@ public class GradeService {
 
                     return new GradeWithStudentAndDisciplineResponseDTO(studentId, studentName, disciplineName, gradeValue);
                 })
+                .map(gradeWithStudentAndDisciplineAssembler::toModel)
                 .toList();
-
     }
 
     public GradeResponseDTO create(EnrollmentResponseDTO enrollmentResponseDTO, GradeRequestDTO gradeRequestDTO) {
@@ -140,6 +170,6 @@ public class GradeService {
         Double gradeValue = gradeRequestDTO.getGradeValue();
         Enrollment enrollment = EnrollmentMapper.INSTANCE.toModel(enrollmentResponseDTO);
 
-        return GradeMapper.INSTANCE.toDTO(gradeRepository.save(new Grade(null, gradeValue, enrollment)));
+        return gradeAssembler.toModel(gradeRepository.save(new Grade(null, gradeValue, enrollment)));
     }
 }

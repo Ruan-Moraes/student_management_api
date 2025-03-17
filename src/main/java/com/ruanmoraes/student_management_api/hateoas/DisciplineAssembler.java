@@ -18,14 +18,14 @@ public class DisciplineAssembler extends RepresentationModelAssemblerSupport<Dis
 
     @Override
     public DisciplineResponseDTO toModel(Discipline entity) {
-        DisciplineResponseDTO disciplineResponseDTO = DisciplineMapper.INSTANCE.toDTO(entity);
+        DisciplineResponseDTO dto = DisciplineMapper.INSTANCE.toDTO(entity);
 
-        disciplineResponseDTO.add(linkTo(methodOn(DisciplineController.class).findById(entity.getId())).withSelfRel().withType("GET"));
-        disciplineResponseDTO.add(linkTo(methodOn(DisciplineController.class).findAll()).withRel("FindAll").withType("GET"));
-        disciplineResponseDTO.add(linkTo(methodOn(DisciplineController.class).create(null)).withRel("Create").withType("POST"));
-        disciplineResponseDTO.add(linkTo(methodOn(DisciplineController.class).updateById(null)).withRel("Update").withType("PUT"));
-        disciplineResponseDTO.add(linkTo(methodOn(DisciplineController.class).deleteById(entity.getId())).withRel("Delete").withType("DELETE"));
+        dto.add(linkTo(methodOn(DisciplineController.class).findById(entity.getId())).withSelfRel().withType("GET"));
+        dto.add(linkTo(methodOn(DisciplineController.class).findAll()).withRel("FindAll").withType("GET"));
+        dto.add(linkTo(methodOn(DisciplineController.class).create(null)).withRel("Create").withType("POST"));
+        dto.add(linkTo(methodOn(DisciplineController.class).updateById(null)).withRel("Update").withType("PUT"));
+        dto.add(linkTo(methodOn(DisciplineController.class).deleteById(entity.getId())).withRel("Delete").withType("DELETE"));
 
-        return disciplineResponseDTO;
+        return dto;
     }
 }
