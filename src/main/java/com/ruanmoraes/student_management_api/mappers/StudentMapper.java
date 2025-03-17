@@ -17,6 +17,5 @@ public interface StudentMapper {
     @Mapping(target = "enrollments", ignore = true)
     Student toModel(StudentResponseDTO studentResponseDTO);
 
-    @Mapping(target = "enrollments", ignore = true)
     StudentResponseDTO toDTO(Student student);
 }

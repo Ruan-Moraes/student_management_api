@@ -38,7 +38,7 @@ public class StudentController {
         return ResponseEntity.status(200).body(studentService.updateById(studentRequestDTO));
     }
 
-    @GetMapping(value = "/lowFrequency")
+    @GetMapping(value = "/lowFrequency", produces = "application/json")
     public ResponseEntity<List<StudentResponseDTO>> findByLowFrequency(@RequestParam("frequency_below") Double frequency) {
         return ResponseEntity.status(200).body(studentService.listByLowFrequency(frequency));
     }

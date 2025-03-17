@@ -107,13 +107,17 @@ public class GradeService {
     public AvarageResponseDTO averageGradeByStudentId(Long studentId) {
         StudentGradesResponseDTO studentGrades = findAllGradesByStudentId(studentId);
 
-        AvarageResponseDTO avarageResponseDTO = new AvarageResponseDTO(studentGrades
+        double avarage = studentGrades
                 .getGrades()
                 .values()
                 .stream()
-                .reduce(0.0, Double::sum) / studentGrades.getGrades().size());
+                .reduce(0.0, Double::sum) / studentGrades.getGrades().size();
 
-        return avarageAssembler.toModel(avarageResponseDTO);
+        if (Double.isNaN(avarage)) {
+            avarage = 0.0;
+        }
+
+        return avarageAssembler.toModel(new AvarageResponseDTO(avarage));
     }
 
     public AvarageByDisciplineResponseDTO calculateAvarageAllGradeByDiscipline() {
@@ -123,10 +127,17 @@ public class GradeService {
                 .map(DisciplineResponseDTO::getName)
                 .toList();
 
+        System.out.println(disciplines);
 
         disciplines.forEach(disciplineName -> {
             Integer totalGradesByDiscipline = gradeRepository.findAll().stream()
                     .filter(grade -> grade.getEnrollment().getDiscipline().getName().equals(disciplineName)).toList().size();
+
+            if (totalGradesByDiscipline == 0) {
+                avarageByDiscipline.put(disciplineName, 0.0);
+
+                return;
+            }
 
             Double averageByDiscipline = gradeRepository.findAll().stream()
                     .filter(grade -> grade.getEnrollment().getDiscipline().getName().equals(disciplineName))

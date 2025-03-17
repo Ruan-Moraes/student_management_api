@@ -3,7 +3,6 @@ package com.ruanmoraes.student_management_api.controllers;
 import com.ruanmoraes.student_management_api.dtos.request.EnrollmentRequestDTO;
 import com.ruanmoraes.student_management_api.dtos.response.EnrollmentResponseDTO;
 import com.ruanmoraes.student_management_api.services.EnrollmentService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/enrollments")
-@Slf4j
 public class EnrollmentController {
     private final EnrollmentService enrollmentService;
 

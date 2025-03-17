@@ -31,9 +31,14 @@ public class GradeController {
         return ResponseEntity.status(200).body(gradeService.findAll());
     }
 
-    @GetMapping(value = "/{studentId}", produces = "application/json")
+    @GetMapping(value = "/findAllGradesByStudent/{studentId}", produces = "application/json")
     public ResponseEntity<StudentGradesResponseDTO> findAllGradesByStudentId(@PathVariable Long studentId) {
         return ResponseEntity.status(200).body(gradeService.findAllGradesByStudentId(studentId));
+    }
+
+    @GetMapping(value = "/avarageByStudent/{studentId}", produces = "application/json")
+    public ResponseEntity<AvarageResponseDTO> averageGradeByStudentId(@PathVariable Long studentId) {
+        return ResponseEntity.status(200).body(gradeService.averageGradeByStudentId(studentId));
     }
 
     @GetMapping(value = "/calculateAverageAllGrade", produces = "application/json")
@@ -44,11 +49,6 @@ public class GradeController {
     @GetMapping(value = "/calculateAvarageAllGradeByDiscipline", produces = "application/json")
     public ResponseEntity<AvarageByDisciplineResponseDTO> calculateAvarageAllGradeByDiscipline() {
         return ResponseEntity.status(200).body(gradeService.calculateAvarageAllGradeByDiscipline());
-    }
-
-    @GetMapping(value = "/avarage/{studentId}", produces = "application/json")
-    public ResponseEntity<AvarageResponseDTO> averageGradeByStudentId(@PathVariable Long studentId) {
-        return ResponseEntity.status(200).body(gradeService.averageGradeByStudentId(studentId));
     }
 
     @GetMapping(value = "/findAboveAverageStudents", produces = "application/json")

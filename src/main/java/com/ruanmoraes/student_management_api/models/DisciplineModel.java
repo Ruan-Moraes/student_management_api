@@ -6,21 +6,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
-@Table(name = "tb_grades")
+@Table(name = "tb_disciplines")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Grade {
+public class Discipline {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Double gradeValue;
+    @Column(nullable = false, unique = true)
+    private String name;
 
-    @OneToOne
-    @JoinColumn(name = "enrollment_id", nullable = false)
-    private Enrollment enrollment;
+    @OneToMany(mappedBy = "discipline", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Enrollment> enrollments;
 }

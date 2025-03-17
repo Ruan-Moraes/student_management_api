@@ -9,12 +9,12 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
-@Table(name = "tb_disciplines")
+@Table(name = "tb_students")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Discipline {
+public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,6 +22,9 @@ public class Discipline {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "discipline", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Enrollment> enrollments;
+    @Column(nullable = false)
+    private Double frequency;
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EnrollmentModel> enrollmentModels;
 }
