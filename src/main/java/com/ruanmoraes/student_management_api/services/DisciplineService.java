@@ -5,7 +5,7 @@ import com.ruanmoraes.student_management_api.dtos.response.DisciplineResponseDTO
 import com.ruanmoraes.student_management_api.exceptions.ResourceNotFoundException;
 import com.ruanmoraes.student_management_api.hateoas.DisciplineAssembler;
 import com.ruanmoraes.student_management_api.mappers.DisciplineMapper;
-import com.ruanmoraes.student_management_api.models.Discipline;
+import com.ruanmoraes.student_management_api.models.DisciplineModel;
 import com.ruanmoraes.student_management_api.repositories.DisciplineRepository;
 import org.springframework.stereotype.Service;
 
@@ -28,31 +28,31 @@ public class DisciplineService {
     }
 
     public DisciplineResponseDTO findById(Long id) throws ResourceNotFoundException {
-        Discipline discipline = disciplineRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        DisciplineModel disciplineModel = disciplineRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
 
-        return disciplineAssembler.toModel(discipline);
+        return disciplineAssembler.toModel(disciplineModel);
     }
 
     public DisciplineResponseDTO create(DisciplineRequestDTO disciplineRequestDTO) {
-        Discipline discipline = DisciplineMapper.INSTANCE.toModel(disciplineRequestDTO);
+        DisciplineModel disciplineModel = DisciplineMapper.INSTANCE.toModel(disciplineRequestDTO);
 
-        disciplineRepository.save(discipline);
+        disciplineRepository.save(disciplineModel);
 
-        return disciplineAssembler.toModel(discipline);
+        return disciplineAssembler.toModel(disciplineModel);
     }
 
     public DisciplineResponseDTO updateById(DisciplineRequestDTO disciplineRequestDTO) throws ResourceNotFoundException {
-        Discipline discipline = disciplineRepository.findById(disciplineRequestDTO.getId()).orElseThrow(ResourceNotFoundException::new);
-        discipline.setName(disciplineRequestDTO.getName());
+        DisciplineModel disciplineModel = disciplineRepository.findById(disciplineRequestDTO.getId()).orElseThrow(ResourceNotFoundException::new);
+        disciplineModel.setName(disciplineRequestDTO.getName());
 
-        disciplineRepository.save(discipline);
+        disciplineRepository.save(disciplineModel);
 
-        return disciplineAssembler.toModel(discipline);
+        return disciplineAssembler.toModel(disciplineModel);
     }
 
     public void deleteById(Long id) throws ResourceNotFoundException {
-        Discipline discipline = disciplineRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        DisciplineModel disciplineModel = disciplineRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
 
-        disciplineRepository.deleteById(discipline.getId());
+        disciplineRepository.deleteById(disciplineModel.getId());
     }
 }

@@ -3,6 +3,7 @@ package com.ruanmoraes.student_management_api.controllers;
 import com.ruanmoraes.student_management_api.dtos.request.EnrollmentRequestDTO;
 import com.ruanmoraes.student_management_api.dtos.response.EnrollmentResponseDTO;
 import com.ruanmoraes.student_management_api.services.EnrollmentService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +36,7 @@ public class EnrollmentController {
     }
 
     @PostMapping(consumes = "application/json", produces = "application/json")
-    public ResponseEntity<EnrollmentResponseDTO> create(@RequestBody EnrollmentRequestDTO enrollmentRequestDTO) {
+    public ResponseEntity<EnrollmentResponseDTO> create(@Valid @RequestBody EnrollmentRequestDTO enrollmentRequestDTO) {
         return ResponseEntity.status(201).body(enrollmentService.create(enrollmentRequestDTO));
     }
 

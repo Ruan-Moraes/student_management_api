@@ -3,7 +3,7 @@ package com.ruanmoraes.student_management_api.hateoas;
 import com.ruanmoraes.student_management_api.controllers.EnrollmentController;
 import com.ruanmoraes.student_management_api.dtos.response.EnrollmentResponseDTO;
 import com.ruanmoraes.student_management_api.mappers.EnrollmentMapper;
-import com.ruanmoraes.student_management_api.models.Enrollment;
+import com.ruanmoraes.student_management_api.models.EnrollmentModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
@@ -11,13 +11,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class EnrollmentAssembler extends RepresentationModelAssemblerSupport<Enrollment, EnrollmentResponseDTO> {
+public class EnrollmentAssembler extends RepresentationModelAssemblerSupport<EnrollmentModel, EnrollmentResponseDTO> {
     public EnrollmentAssembler() {
         super(EnrollmentController.class, EnrollmentResponseDTO.class);
     }
 
     @Override
-    public EnrollmentResponseDTO toModel(Enrollment entity) {
+    public EnrollmentResponseDTO toModel(EnrollmentModel entity) {
         EnrollmentResponseDTO enrollmentResponseDTO = EnrollmentMapper.INSTANCE.toDTO(entity);
         enrollmentResponseDTO.setStudentId(entity.getStudent().getId());
         enrollmentResponseDTO.setDisciplineId(entity.getDiscipline().getId());

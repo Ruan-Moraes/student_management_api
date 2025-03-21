@@ -16,8 +16,8 @@ import com.ruanmoraes.student_management_api.hateoas.custom.AvarageByDisciplineA
 import com.ruanmoraes.student_management_api.hateoas.custom.GradeWithStudentAndDisciplineAssembler;
 import com.ruanmoraes.student_management_api.hateoas.custom.StudentGradesAssembler;
 import com.ruanmoraes.student_management_api.mappers.EnrollmentMapper;
-import com.ruanmoraes.student_management_api.models.Enrollment;
-import com.ruanmoraes.student_management_api.models.Grade;
+import com.ruanmoraes.student_management_api.models.EnrollmentModel;
+import com.ruanmoraes.student_management_api.models.GradeModel;
 import com.ruanmoraes.student_management_api.repositories.GradeRepository;
 import org.springframework.stereotype.Service;
 
@@ -76,7 +76,7 @@ public class GradeService {
         String studentName = studentResponseDTO.getName();
         Map<String, Double> grades = new HashMap<>();
 
-        List<Grade> filtedGrades = gradeRepository.findAll().stream()
+        List<GradeModel> filtedGrades = gradeRepository.findAll().stream()
                 .filter(grade -> grade.getEnrollment().getStudent().getId().equals(studentId))
                 .toList();
 
@@ -98,7 +98,7 @@ public class GradeService {
 
         AvarageResponseDTO avarageResponseDTO = new AvarageResponseDTO(gradeRepository
                 .findAll().stream()
-                .map(Grade::getGradeValue)
+                .map(GradeModel::getGradeValue)
                 .reduce(0.0, Double::sum) / totalGrades);
 
         return avarageAssembler.toModel(avarageResponseDTO);
@@ -141,7 +141,7 @@ public class GradeService {
 
             Double averageByDiscipline = gradeRepository.findAll().stream()
                     .filter(grade -> grade.getEnrollment().getDiscipline().getName().equals(disciplineName))
-                    .map(Grade::getGradeValue)
+                    .map(GradeModel::getGradeValue)
                     .reduce(0.0, Double::sum) / totalGradesByDiscipline;
 
             avarageByDiscipline.put(disciplineName, averageByDiscipline);
@@ -179,8 +179,8 @@ public class GradeService {
                 );
 
         Double gradeValue = gradeRequestDTO.getGradeValue();
-        Enrollment enrollment = EnrollmentMapper.INSTANCE.toModel(enrollmentResponseDTO);
+        EnrollmentModel enrollment = EnrollmentMapper.INSTANCE.toModel(enrollmentResponseDTO);
 
-        return gradeAssembler.toModel(gradeRepository.save(new Grade(null, gradeValue, enrollment)));
+        return gradeAssembler.toModel(gradeRepository.save(new GradeModel(null, gradeValue, enrollment)));
     }
 }

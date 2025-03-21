@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Grade {
+public class GradeModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,5 +22,5 @@ public class Grade {
 
     @OneToOne
     @JoinColumn(name = "enrollment_id", nullable = false)
-    private EnrollmentModel enrollmentModel;
+    private EnrollmentModel enrollment;
 }

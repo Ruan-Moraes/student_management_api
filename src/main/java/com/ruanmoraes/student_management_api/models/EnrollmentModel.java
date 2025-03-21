@@ -12,19 +12,19 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Enrollment {
+public class EnrollmentModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
+    private StudentModel student;
 
     @ManyToOne
     @JoinColumn(name = "discipline_id", nullable = false)
-    private Discipline discipline;
+    private DisciplineModel discipline;
 
     @OneToOne(mappedBy = "enrollment", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Grade grade;
+    private GradeModel grade;
 }

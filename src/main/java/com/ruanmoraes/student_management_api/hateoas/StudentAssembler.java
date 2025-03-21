@@ -3,7 +3,7 @@ package com.ruanmoraes.student_management_api.hateoas;
 import com.ruanmoraes.student_management_api.controllers.StudentController;
 import com.ruanmoraes.student_management_api.dtos.response.StudentResponseDTO;
 import com.ruanmoraes.student_management_api.mappers.StudentMapper;
-import com.ruanmoraes.student_management_api.models.Student;
+import com.ruanmoraes.student_management_api.models.StudentModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
@@ -13,13 +13,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 @Slf4j
-public class StudentAssembler extends RepresentationModelAssemblerSupport<Student, StudentResponseDTO> {
+public class StudentAssembler extends RepresentationModelAssemblerSupport<StudentModel, StudentResponseDTO> {
     public StudentAssembler() {
         super(StudentController.class, StudentResponseDTO.class);
     }
 
     @Override
-    public StudentResponseDTO toModel(Student entity) {
+    public StudentResponseDTO toModel(StudentModel entity) {
         StudentResponseDTO studentResponseDTO = StudentMapper.INSTANCE.toDTO(entity);
 
 

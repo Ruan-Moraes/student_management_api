@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.ruanmoraes</groupId>
-    <artifactId>student-management-api</artifactId>
+    <artifactId>studentModel-management-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>student-management-api</name>
+    <name>studentModel-management-api</name>
     <description>Sistema de gerenciamento de alunos para professores.</description>
     <url/>
     <licenses>

@@ -59,7 +59,8 @@ Este é o **backend** de um sistema de gerenciamento acadêmico desenvolvido em 
 
 ## Frontend
 
-O frontend do projeto pode ser encontrado clicando em [student-management-ui](https://github.com/Ruan-Moraes/student-management-ui).
+O frontend do projeto pode ser encontrado clicando
+em [studentModel-management-ui](https://github.com/Ruan-Moraes/studentModel-management-ui).
 
 ## Observações
 

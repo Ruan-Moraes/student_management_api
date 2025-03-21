@@ -7,9 +7,9 @@ import com.ruanmoraes.student_management_api.exceptions.ResourceNotFoundExceptio
 import com.ruanmoraes.student_management_api.hateoas.EnrollmentAssembler;
 import com.ruanmoraes.student_management_api.mappers.DisciplineMapper;
 import com.ruanmoraes.student_management_api.mappers.StudentMapper;
-import com.ruanmoraes.student_management_api.models.Discipline;
-import com.ruanmoraes.student_management_api.models.Enrollment;
-import com.ruanmoraes.student_management_api.models.Student;
+import com.ruanmoraes.student_management_api.models.DisciplineModel;
+import com.ruanmoraes.student_management_api.models.EnrollmentModel;
+import com.ruanmoraes.student_management_api.models.StudentModel;
 import com.ruanmoraes.student_management_api.repositories.EnrollmentRepository;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +36,7 @@ public class EnrollmentService {
     }
 
     public EnrollmentResponseDTO findById(Long id) throws ResourceNotFoundException {
-        Enrollment enrollment = enrollmentRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        EnrollmentModel enrollment = enrollmentRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
 
         return enrollmentAssembler.toModel(enrollment);
     }
@@ -54,8 +54,8 @@ public class EnrollmentService {
     }
 
     public EnrollmentResponseDTO create(EnrollmentRequestDTO enrollmentRequestDTO) throws ResourceNotFoundException, ResourceAlreadyCreatedException {
-        Student student = StudentMapper.INSTANCE.toModel(studentService.findById(enrollmentRequestDTO.getStudentId()));
-        Discipline discipline = DisciplineMapper.INSTANCE.toModel(disciplineService.findById(enrollmentRequestDTO.getDisciplineId()));
+        StudentModel student = StudentMapper.INSTANCE.toModel(studentService.findById(enrollmentRequestDTO.getStudentId()));
+        DisciplineModel discipline = DisciplineMapper.INSTANCE.toModel(disciplineService.findById(enrollmentRequestDTO.getDisciplineId()));
 
         if (enrollmentRepository.findAll().stream()
                 .anyMatch(e ->
@@ -64,16 +64,16 @@ public class EnrollmentService {
             throw new ResourceAlreadyCreatedException();
         }
 
-        Enrollment enrollment = new Enrollment(
+        EnrollmentModel enrollmentModel = new EnrollmentModel(
                 null,
                 student,
                 discipline,
                 null
         );
 
-        enrollmentRepository.save(enrollment);
+        enrollmentRepository.save(enrollmentModel);
 
-        return enrollmentAssembler.toModel(enrollment);
+        return enrollmentAssembler.toModel(enrollmentModel);
     }
 
     public void deleteById(Long id) {

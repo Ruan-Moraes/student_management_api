@@ -2,7 +2,7 @@ package com.ruanmoraes.student_management_api.mappers;
 
 import com.ruanmoraes.student_management_api.dtos.request.StudentRequestDTO;
 import com.ruanmoraes.student_management_api.dtos.response.StudentResponseDTO;
-import com.ruanmoraes.student_management_api.models.Student;
+import com.ruanmoraes.student_management_api.models.StudentModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -12,10 +12,10 @@ public interface StudentMapper {
     StudentMapper INSTANCE = Mappers.getMapper(StudentMapper.class);
 
     @Mapping(target = "enrollments", ignore = true)
-    Student toModel(StudentRequestDTO studentRequestDTO);
+    StudentModel toModel(StudentRequestDTO studentRequestDTO);
 
     @Mapping(target = "enrollments", ignore = true)
-    Student toModel(StudentResponseDTO studentResponseDTO);
+    StudentModel toModel(StudentResponseDTO studentResponseDTO);
 
-    StudentResponseDTO toDTO(Student student);
+    StudentResponseDTO toDTO(StudentModel student);
 }

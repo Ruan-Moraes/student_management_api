@@ -1,7 +1,7 @@
 package com.ruanmoraes.student_management_api.mappers;
 
 import com.ruanmoraes.student_management_api.dtos.response.GradeResponseDTO;
-import com.ruanmoraes.student_management_api.models.Grade;
+import com.ruanmoraes.student_management_api.models.GradeModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -9,7 +9,7 @@ import org.mapstruct.factory.Mappers;
 public interface GradeMapper {
     GradeMapper INSTANCE = Mappers.getMapper(GradeMapper.class);
 
-    GradeResponseDTO toDTO(Grade grade);
+    GradeResponseDTO toDTO(GradeModel grade);
 
-    Grade toModel(GradeResponseDTO gradeResponseDTO);
+    GradeModel toModel(GradeResponseDTO gradeResponseDTO);
 }
