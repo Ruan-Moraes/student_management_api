@@ -1,6 +1,7 @@
 package com.ruanmoraes.student_management_api.exceptions.handler;
 
 
+import com.ruanmoraes.student_management_api.exceptions.NameConflictException;
 import com.ruanmoraes.student_management_api.exceptions.ResourceAlreadyCreatedException;
 import com.ruanmoraes.student_management_api.exceptions.ResourceNotFoundException;
 import com.ruanmoraes.student_management_api.exceptions.response.ExceptionResponse;
@@ -37,16 +38,29 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResourceAlreadyCreatedException.class)
-    public final ResponseEntity<ExceptionResponse> EnrollmentCreatedAlreadyException(Exception e, WebRequest request) {
+    public final ResponseEntity<ExceptionResponse> EnrollmentAlreadyCreatedException(Exception e, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 new Date().toString(),
-                String.valueOf(400),
+                String.valueOf(409),
                 e.getClass().getSimpleName(),
                 e.getMessage(),
                 request.getDescription(false)
         );
 
-        return ResponseEntity.status(400).body(exceptionResponse);
+        return ResponseEntity.status(409).body(exceptionResponse);
+    }
+
+    @ExceptionHandler(NameConflictException.class)
+    public final ResponseEntity<ExceptionResponse> NameConflictException(Exception e, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                new Date().toString(),
+                String.valueOf(409),
+                e.getClass().getSimpleName(),
+                e.getMessage(),
+                request.getDescription(false)
+        );
+
+        return ResponseEntity.status(409).body(exceptionResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -54,7 +68,9 @@ public class GlobalExceptionHandler {
         List<String> errors = ex.getBindingResult().getFieldErrors()
                 .stream().map(FieldError::getDefaultMessage).collect(Collectors.toList());
 
-        return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .headers(new HttpHeaders())
+                .body(getErrorsMap(errors));
     }
 
     @ExceptionHandler(Exception.class)
@@ -72,7 +88,9 @@ public class GlobalExceptionHandler {
 
     private Map<String, List<String>> getErrorsMap(List<String> errors) {
         Map<String, List<String>> errorResponse = new HashMap<>();
+
         errorResponse.put("errors", errors);
+
         return errorResponse;
     }
 }

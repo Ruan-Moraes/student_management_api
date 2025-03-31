@@ -2,6 +2,7 @@ package com.ruanmoraes.student_management_api.services;
 
 import com.ruanmoraes.student_management_api.dtos.request.StudentRequestDTO;
 import com.ruanmoraes.student_management_api.dtos.response.StudentResponseDTO;
+import com.ruanmoraes.student_management_api.exceptions.NameConflictException;
 import com.ruanmoraes.student_management_api.exceptions.ResourceNotFoundException;
 import com.ruanmoraes.student_management_api.hateoas.StudentAssembler;
 import com.ruanmoraes.student_management_api.mappers.StudentMapper;
@@ -33,18 +34,26 @@ public class StudentService {
         return studentAssembler.toModel(student);
     }
 
-    public StudentResponseDTO create(StudentRequestDTO studentRequestDTO) {
+    public StudentResponseDTO create(StudentRequestDTO studentRequestDTO) throws NameConflictException {
         StudentModel student = StudentMapper.INSTANCE.toModel(studentRequestDTO);
+
+        if (studentRepository.existsByName(student.getName())) {
+            throw new NameConflictException(student.getName());
+        }
 
         studentRepository.save(student);
 
         return studentAssembler.toModel(student);
     }
 
-    public StudentResponseDTO updateById(StudentRequestDTO studentRequestDTO) throws ResourceNotFoundException {
-        StudentModel student = studentRepository.findById(studentRequestDTO.getId()).orElseThrow(ResourceNotFoundException::new);
+    public StudentResponseDTO updateById(Long id, StudentRequestDTO studentRequestDTO) throws NameConflictException, ResourceNotFoundException {
+        StudentModel student = studentRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
         student.setName(studentRequestDTO.getName());
         student.setFrequency(studentRequestDTO.getFrequency());
+
+        if (studentRepository.existsByName(student.getName())) {
+            throw new NameConflictException(student.getName());
+        }
 
         studentRepository.save(student);
 

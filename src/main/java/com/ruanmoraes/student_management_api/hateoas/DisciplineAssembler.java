@@ -23,7 +23,7 @@ public class DisciplineAssembler extends RepresentationModelAssemblerSupport<Dis
         dto.add(linkTo(methodOn(DisciplineController.class).findById(entity.getId())).withSelfRel().withType("GET"));
         dto.add(linkTo(methodOn(DisciplineController.class).findAll()).withRel("FindAll").withType("GET"));
         dto.add(linkTo(methodOn(DisciplineController.class).create(null)).withRel("Create").withType("POST"));
-        dto.add(linkTo(methodOn(DisciplineController.class).updateById(null)).withRel("Update").withType("PUT"));
+        dto.add(linkTo(methodOn(DisciplineController.class).updateById(null, null)).withRel("Update").withType("PUT"));
         dto.add(linkTo(methodOn(DisciplineController.class).deleteById(entity.getId())).withRel("Delete").withType("DELETE"));
 
         return dto;

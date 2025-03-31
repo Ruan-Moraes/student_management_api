@@ -27,7 +27,7 @@ public class StudentAssembler extends RepresentationModelAssemblerSupport<Studen
         studentResponseDTO.add(linkTo(methodOn(StudentController.class).findAll()).withRel("FindAll").withType("GET"));
         studentResponseDTO.add(linkTo(methodOn(StudentController.class).findByLowFrequency(studentResponseDTO.getFrequency())).withRel("ListByLowFrequency").withType("GET"));
         studentResponseDTO.add(linkTo(methodOn(StudentController.class).create(null)).withRel("Create").withType("POST"));
-        studentResponseDTO.add(linkTo(methodOn(StudentController.class).updateById(null)).withRel("Update").withType("PUT"));
+        studentResponseDTO.add(linkTo(methodOn(StudentController.class).updateById(null, null)).withRel("Update").withType("PUT"));
         studentResponseDTO.add(linkTo(methodOn(StudentController.class).deleteById(studentResponseDTO.getId())).withRel("Delete").withType("DELETE"));
 
 

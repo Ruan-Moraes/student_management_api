@@ -33,9 +33,11 @@ public class StudentController {
         return ResponseEntity.status(201).body(studentService.create(studentRequestDTO));
     }
 
-    @PutMapping(consumes = "application/json", produces = "application/json")
-    public ResponseEntity<StudentResponseDTO> updateById(@Valid @RequestBody StudentRequestDTO studentRequestDTO) {
-        return ResponseEntity.status(200).body(studentService.updateById(studentRequestDTO));
+    @PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<StudentResponseDTO> updateById(
+            @PathVariable Long id,
+            @Valid @RequestBody StudentRequestDTO studentRequestDTO) {
+        return ResponseEntity.status(200).body(studentService.updateById(id, studentRequestDTO));
     }
 
     @GetMapping(value = "/lowFrequency", produces = "application/json")

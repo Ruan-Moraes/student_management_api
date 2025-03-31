@@ -2,6 +2,7 @@ package com.ruanmoraes.student_management_api.services;
 
 import com.ruanmoraes.student_management_api.dtos.request.DisciplineRequestDTO;
 import com.ruanmoraes.student_management_api.dtos.response.DisciplineResponseDTO;
+import com.ruanmoraes.student_management_api.exceptions.NameConflictException;
 import com.ruanmoraes.student_management_api.exceptions.ResourceNotFoundException;
 import com.ruanmoraes.student_management_api.hateoas.DisciplineAssembler;
 import com.ruanmoraes.student_management_api.mappers.DisciplineMapper;
@@ -33,17 +34,25 @@ public class DisciplineService {
         return disciplineAssembler.toModel(disciplineModel);
     }
 
-    public DisciplineResponseDTO create(DisciplineRequestDTO disciplineRequestDTO) {
+    public DisciplineResponseDTO create(DisciplineRequestDTO disciplineRequestDTO) throws NameConflictException {
         DisciplineModel disciplineModel = DisciplineMapper.INSTANCE.toModel(disciplineRequestDTO);
+
+        if (disciplineRepository.existsByName(disciplineModel.getName())) {
+            throw new NameConflictException(disciplineModel.getName());
+        }
 
         disciplineRepository.save(disciplineModel);
 
         return disciplineAssembler.toModel(disciplineModel);
     }
 
-    public DisciplineResponseDTO updateById(DisciplineRequestDTO disciplineRequestDTO) throws ResourceNotFoundException {
-        DisciplineModel disciplineModel = disciplineRepository.findById(disciplineRequestDTO.getId()).orElseThrow(ResourceNotFoundException::new);
+    public DisciplineResponseDTO updateById(Long id, DisciplineRequestDTO disciplineRequestDTO) throws NameConflictException, ResourceNotFoundException {
+        DisciplineModel disciplineModel = disciplineRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
         disciplineModel.setName(disciplineRequestDTO.getName());
+
+        if (disciplineRepository.existsByName(disciplineModel.getName())) {
+            throw new NameConflictException(disciplineModel.getName());
+        }
 
         disciplineRepository.save(disciplineModel);
 

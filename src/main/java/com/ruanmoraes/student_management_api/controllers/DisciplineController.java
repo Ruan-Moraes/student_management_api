@@ -33,9 +33,11 @@ public class DisciplineController {
         return ResponseEntity.status(201).body(disciplineService.create(disciplineRequestDTO));
     }
 
-    @PutMapping(consumes = "application/json", produces = "application/json")
-    public ResponseEntity<DisciplineResponseDTO> updateById(@Valid @RequestBody DisciplineRequestDTO disciplineRequestDTO) {
-        return ResponseEntity.status(200).body(disciplineService.updateById(disciplineRequestDTO));
+    @PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<DisciplineResponseDTO> updateById(
+            @PathVariable Long id,
+            @Valid @RequestBody DisciplineRequestDTO disciplineRequestDTO) {
+        return ResponseEntity.status(200).body(disciplineService.updateById(id, disciplineRequestDTO));
     }
 
     @DeleteMapping(value = "/{id}")
