@@ -22,11 +22,13 @@ public class GradeAssembler extends RepresentationModelAssemblerSupport<GradeMod
 
         gradeResponseDTO.add(linkTo(methodOn(GradeController.class).findAll()).withRel("FindAll").withType("GET"));
         gradeResponseDTO.add(linkTo(methodOn(GradeController.class).findAllGradesByStudentId(null)).withRel("FindAllGradesByStudentId").withType("GET"));
+        gradeResponseDTO.add(linkTo(methodOn(GradeController.class).findAverageForEachStudent()).withRel("FindById").withType("GET"));
+        gradeResponseDTO.add(linkTo(methodOn(GradeController.class).findAverageStudentById(null)).withRel("AverageGradeByStudentId").withType("GET"));
         gradeResponseDTO.add(linkTo(methodOn(GradeController.class).findAboveAverageStudents()).withRel("FindAboveAverageStudents").withType("GET"));
-        gradeResponseDTO.add(linkTo(methodOn(GradeController.class).calculateAverageAllGrade()).withRel("CalculateAverageAllGrade").withType("GET"));
-        gradeResponseDTO.add(linkTo(methodOn(GradeController.class).calculateAvarageAllGradeByDiscipline()).withRel("CalculateAvarageAllGradeByDiscipline").withType("GET"));
-        gradeResponseDTO.add(linkTo(methodOn(GradeController.class).averageGradeByStudentId(null)).withRel("AverageGradeByStudentId").withType("GET"));
+        gradeResponseDTO.add(linkTo(methodOn(GradeController.class).calculateAverageAllGrades()).withRel("CalculateAverageAllGrade").withType("GET"));
+        gradeResponseDTO.add(linkTo(methodOn(GradeController.class).calculateAverageGradesByDiscipline()).withRel("CalculateAvarageAllGradeByDiscipline").withType("GET"));
         gradeResponseDTO.add(linkTo(methodOn(GradeController.class).create(null, null, null)).withRel("Create").withType("POST"));
+        gradeResponseDTO.add(linkTo(methodOn(GradeController.class).update(null, null, null)).withRel("Update").withType("PUT"));
 
         return gradeResponseDTO;
     }

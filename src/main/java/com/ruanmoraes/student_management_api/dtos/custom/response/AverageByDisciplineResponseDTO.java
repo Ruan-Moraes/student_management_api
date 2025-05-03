@@ -8,6 +8,6 @@ import java.util.Map;
 
 @AllArgsConstructor
 @Getter
-public class AvarageByDisciplineResponseDTO extends RepresentationModel<AvarageByDisciplineResponseDTO> {
+public class AverageByDisciplineResponseDTO extends RepresentationModel<AverageByDisciplineResponseDTO> {
     Map<String, Double> averageByDiscipline;
 }

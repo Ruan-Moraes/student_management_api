@@ -1,86 +1,146 @@
-# Sistema de Gerenciamento Acadêmico (Backend)
+# Sistema de Gerenciamento Acadêmico - Backend
 
 ## Descrição
 
-Este é o **backend** de um sistema de gerenciamento acadêmico desenvolvido em **Spring Boot**.
+Este é o **backend** de um sistema de gerenciamento acadêmico desenvolvido com **Spring Boot**. Ele permite:
 
-- Cadastrar, editar e excluir alunos e disciplinas.
-- Matricular alunos em disciplinas.
-- Registrar e atualizar notas dos alunos.
-- Calcular médias de notas por aluno, disciplina e turma.
-- Identificar alunos com frequência baixa e desempenho acima da média.
+- Gerenciar alunos e disciplinas.
+- Realizar matrículas.
+- Registrar e atualizar notas.
+- Calcular médias e identificar alunos com baixo desempenho ou frequência.
 
 ## Tecnologias Utilizadas
 
-- **Java (Spring Boot)**
-- **JPA (Java Persistence API)**
-- **H2 Database**
+- **Java 21**
 - **Maven**
+- **Spring Boot**
+- **Spring Data JPA**
+- **Spring MVC**
+- **Spring HATEOAS**
+- **H2 Database**
+- **Swagger**
+- **MapStruct**
 
 ## Estrutura do Projeto
 
-- **Controllers**: Gerenciam as requisições da API.
-- **Services**: Contêm a lógica de negócios.
-- **Repositories**: Fazem a comunicação com o banco de dados.
-- **Entities**: Representam as tabelas do banco de dados.
-- **DTOs**: Representam os objetos de transferência de dados.
+- `config/` - Configurações do projeto.
+- `controllers/` - Camada de entrada da aplicação (REST).
+- `controllers/docs/` - Documentação Swagger.
+- `models/` - Modelos de dados (entidades).
+- `services/` - Contém a lógica de negócio.
+- `repositories/` - Comunicação com o banco de dados.
+- `exceptions/` - Tratamento de exceções.
+- `dtos/` - Objetos de transferência de dados (request/response).
+- `mappers/` - Mapeamento entre entidades e DTOs.
+- `hateoas/` - Implementação do HATEOAS.'
 
 ## Endpoints da API
 
-### Alunos (`/alunos`)
+### Alunos (`/students`)
 
-- **POST** `/cadastrar` - Cadastra um novo aluno.
-- **GET** `/listar` - Lista todos os alunos.
-- **PUT** `/atualizar/{id}` - Atualiza um aluno existente.
-- **DELETE** `/deletar/{id}` - Deleta um aluno.
-- **GET** `/buscar/frequencia/{frequencia}` - Lista alunos com frequência abaixo de um valor específico.
+| Método | Endpoint                 | Descrição                                |
+|--------|--------------------------|------------------------------------------|
+| GET    | `/students`              | Lista todos os alunos                    |
+| GET    | `/students/{id}`         | Busca um aluno por ID                    |
+| POST   | `/students`              | Cadastra um novo aluno                   |
+| PUT    | `/students/{id}`         | Atualiza os dados de um aluno            |
+| DELETE | `/students/{id}`         | Remove um aluno                          |
+| GET    | `/students/lowFrequency` | Lista alunos com frequência abaixo de X% |
 
-### Disciplinas (`/disciplinas`)
+### Disciplinas (`/disciplines`)
 
-- **POST** `/cadastrar` - Cadastra uma nova disciplina.
-- **GET** `/listar` - Lista todas as disciplinas.
-- **PUT** `/atualizar/{id}` - Atualiza uma disciplina existente.
-- **DELETE** `/deletar/{id}` - Deleta uma disciplina.
+| Método | Endpoint            | Descrição                           |
+|--------|---------------------|-------------------------------------|
+| GET    | `/disciplines`      | Lista todas as disciplinas          |
+| GET    | `/disciplines/{id}` | Busca uma disciplina por ID         |
+| POST   | `/disciplines`      | Cadastra uma nova disciplina        |
+| PUT    | `/disciplines/{id}` | Atualiza os dados de uma disciplina |
+| DELETE | `/disciplines/{id}` | Remove uma disciplina               |
 
-### Matrículas (`/matriculas`)
+### Matrículas (`/enrollments`)
 
-- **POST** `/criar` - Cria uma nova matrícula.
-- **DELETE** `/remover/{id}` - Remove uma matrícula.
+| Método | Endpoint                                      | Descrição                                    |
+|--------|-----------------------------------------------|----------------------------------------------|
+| GET    | `/enrollments`                                | Lista todas as matrículas                    |
+| GET    | `/enrollments/{id}`                           | Busca uma matrícula por ID                   |
+| GET    | `/enrollments/FindByStudentIdAndDisciplineId` | Busca matrícula por ID de aluno e disciplina |
+| POST   | `/enrollments`                                | Cria uma nova matrícula                      |
+| DELETE | `/enrollments/{id}`                           | Remove uma matrícula                         |
 
-### Notas (`/notas`)
+### Notas (`/grades`)
 
-- **GET** `/alunos` - Retorna todas as notas dos alunos.
-- **GET** `/alunos/{alunoId}` - Retorna as notas de um aluno específico.
-- **GET** `/media-todos-alunos` - Calcula a média das notas de todos os alunos.
-- **GET** `/media/{alunoId}` - Calcula a média das notas de um aluno específico.
-- **GET** `/media-todos-alunos-disciplina` - Calcula a média das notas de todos os alunos por disciplina.
-- **GET** `/alunos-acima-media-turma` - Retorna alunos com notas acima da média da turma.
-- **PUT** `/atualizar/{alunoId}/{disciplinaId}` - Atualiza a nota de um aluno em uma disciplina específica.
+| Método | Endpoint                                       | Descrição                                            |
+|--------|------------------------------------------------|------------------------------------------------------|
+| GET    | `/grades`                                      | Lista todas as notas com dados de aluno e disciplina |
+| GET    | `/grades/findAllGradesByStudentId/{studentId}` | Lista notas de um aluno específico                   |
+| GET    | `/grades/findAverageForEachStudent`            | Retorna a média de cada aluno                        |
+| GET    | `/grades/findAverageStudentById/{studentId}`   | Retorna a média de um aluno específico               |
+| GET    | `/grades/findAboveAverageStudents`             | Lista alunos com desempenho acima da média           |
+| GET    | `/grades/calculateAverageAllGrades`            | Calcula a média geral de todas as notas              |
+| GET    | `/grades/averageGradesByDiscipline`            | Calcula a média das notas por disciplina             |
+| POST   | `/grades?studentId=X&disciplineId=Y`           | Registra uma nota para um aluno em uma disciplina    |
+| PUT    | `/grades?studentId=X&disciplineId=Y`           | Atualiza a nota de um aluno em uma disciplina        |
 
 ## Frontend
 
-O frontend do projeto pode ser encontrado clicando
-em [studentModel-management-ui](https://github.com/Ruan-Moraes/studentModel-management-ui).
-
-## Observações
-
-- Preferi utilizar o H2 Database para facilitar a execução do projeto.
-- Não implementei autenticação, pois fugiria do escopo do projeto.
-- Não fiz tratamento de exceções, e nem validação de dados, por questões de tempo.
+O frontend deste projeto está disponível no repositório:
+👉 [student-management-ui](https://github.com/Ruan-Moraes/student-management-ui)
 
 ## Requisitos
 
 - Java 21
-- Maven
+- Maven 3.9+
 
 ## Como Rodar o Projeto
 
-1. Clone o repositório
+1. **Clone o repositório**:
 
 ```bash
 git clone https://github.com/Ruan-Moraes/student_management_api
+cd student_management_api
 ```
 
-2. Importe o projeto em sua IDE de preferência.
+2. **Abra na sua IDE** (IntelliJ, Eclipse, VS Code com extensão Java).
 
-3. Execute a classe `StudentManagementApiApplication`.
+3. **Execute a classe principal**:
+
+```
+src/main/java/com/example/studentManagementApi/StudentManagementApiApplication.java
+```
+
+4. **Acesse a aplicação** em:
+
+```
+http://localhost:8080
+```
+
+5. **Console do banco H2 (opcional)**:
+
+```
+http://localhost:8080/h2-console
+```
+
+- JDBC URL: `jdbc:h2:file:./data/DB`
+- User: `student-management-api`
+- Password: `student-management-api`
+
+6. **Documentação Swagger**:
+
+```
+http://localhost:8080/swagger-ui/index.html
+```
+
+---
+
+## Observações
+
+- A aplicação usa **H2 Database em memória**, mas os dados não são perdidos ao reiniciar. Fiz uma gambiarra para ganhar
+  tempo.
+- Não possui autenticação.
+
+---
+
+## Frontend
+
+Repositório do frontend da aplicação:  
+👉 [studentModel-management-ui](https://github.com/Ruan-Moraes/studentModel-management-ui)

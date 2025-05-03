@@ -21,5 +21,4 @@ public class EnrollmentRequestDTO {
     @Positive(message = "O campo valor deve ser maior que 0")
     @NotNull(message = "O campo valor é obrigatório")
     private Long disciplineId;
-//    private GradeRequestDTO grade;
 }

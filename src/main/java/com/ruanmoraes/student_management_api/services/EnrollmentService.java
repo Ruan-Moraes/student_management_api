@@ -11,11 +11,13 @@ import com.ruanmoraes.student_management_api.models.DisciplineModel;
 import com.ruanmoraes.student_management_api.models.EnrollmentModel;
 import com.ruanmoraes.student_management_api.models.StudentModel;
 import com.ruanmoraes.student_management_api.repositories.EnrollmentRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class EnrollmentService {
     private final EnrollmentRepository enrollmentRepository;
     private final StudentService studentService;

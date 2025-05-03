@@ -1,7 +1,7 @@
 package com.ruanmoraes.student_management_api.hateoas.custom;
 
 import com.ruanmoraes.student_management_api.controllers.GradeController;
-import com.ruanmoraes.student_management_api.dtos.custom.response.StudentGradesResponseDTO;
+import com.ruanmoraes.student_management_api.dtos.custom.response.AverageByDisciplineResponseDTO;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
@@ -9,13 +9,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
-public class StudentGradesAssembler extends RepresentationModelAssemblerSupport<StudentGradesResponseDTO, StudentGradesResponseDTO> {
-    public StudentGradesAssembler() {
-        super(GradeController.class, StudentGradesResponseDTO.class);
+public class AverageByDisciplineAssembler extends RepresentationModelAssemblerSupport<AverageByDisciplineResponseDTO, AverageByDisciplineResponseDTO> {
+    public AverageByDisciplineAssembler() {
+        super(GradeController.class, AverageByDisciplineResponseDTO.class);
     }
 
     @Override
-    public StudentGradesResponseDTO toModel(StudentGradesResponseDTO dto) {
+    public AverageByDisciplineResponseDTO toModel(AverageByDisciplineResponseDTO dto) {
         dto.add(linkTo(methodOn(GradeController.class).findAll()).withRel("FindAll").withType("GET"));
         dto.add(linkTo(methodOn(GradeController.class).findAllGradesByStudentId(null)).withRel("FindAllGradesByStudentId").withType("GET"));
         dto.add(linkTo(methodOn(GradeController.class).findAverageForEachStudent()).withRel("FindById").withType("GET"));

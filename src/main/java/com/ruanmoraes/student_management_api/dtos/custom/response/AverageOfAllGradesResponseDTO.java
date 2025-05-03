@@ -6,6 +6,6 @@ import org.springframework.hateoas.RepresentationModel;
 
 @AllArgsConstructor
 @Getter
-public class AvarageResponseDTO extends RepresentationModel<AvarageResponseDTO> {
+public class AverageOfAllGradesResponseDTO extends RepresentationModel<AverageOfAllGradesResponseDTO> {
     private Double average;
 }

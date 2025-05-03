@@ -22,11 +22,11 @@ public class EnrollmentAssembler extends RepresentationModelAssemblerSupport<Enr
         enrollmentResponseDTO.setStudentId(entity.getStudent().getId());
         enrollmentResponseDTO.setDisciplineId(entity.getDiscipline().getId());
 
-        enrollmentResponseDTO.add(linkTo(methodOn(EnrollmentController.class).findById(enrollmentResponseDTO.getId())).withSelfRel().withType("GET"));
-        enrollmentResponseDTO.add(linkTo(methodOn(EnrollmentController.class).findByStudentIdAndDisciplineId(null, null)).withRel("FindByStudentIdAndDisciplineId").withType("GET"));
         enrollmentResponseDTO.add(linkTo(methodOn(EnrollmentController.class).findAll()).withRel("FindAll").withType("GET"));
+        enrollmentResponseDTO.add(linkTo(methodOn(EnrollmentController.class).findById(null)).withSelfRel().withType("GET"));
+        enrollmentResponseDTO.add(linkTo(methodOn(EnrollmentController.class).findByStudentIdAndDisciplineId(null, null)).withRel("FindByStudentIdAndDisciplineId").withType("GET"));
         enrollmentResponseDTO.add(linkTo(methodOn(EnrollmentController.class).create(null)).withRel("Create").withType("POST"));
-        enrollmentResponseDTO.add(linkTo(methodOn(EnrollmentController.class).deleteById(enrollmentResponseDTO.getId())).withRel("Delete").withType("DELETE"));
+        enrollmentResponseDTO.add(linkTo(methodOn(EnrollmentController.class).deleteById(null)).withRel("Delete").withType("DELETE"));
 
         return enrollmentResponseDTO;
     }

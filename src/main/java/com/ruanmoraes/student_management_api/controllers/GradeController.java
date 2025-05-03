@@ -1,9 +1,6 @@
 package com.ruanmoraes.student_management_api.controllers;
 
-import com.ruanmoraes.student_management_api.dtos.custom.response.AvarageByDisciplineResponseDTO;
-import com.ruanmoraes.student_management_api.dtos.custom.response.AvarageResponseDTO;
-import com.ruanmoraes.student_management_api.dtos.custom.response.GradeWithStudentAndDisciplineResponseDTO;
-import com.ruanmoraes.student_management_api.dtos.custom.response.StudentGradesResponseDTO;
+import com.ruanmoraes.student_management_api.dtos.custom.response.*;
 import com.ruanmoraes.student_management_api.dtos.request.GradeRequestDTO;
 import com.ruanmoraes.student_management_api.dtos.response.EnrollmentResponseDTO;
 import com.ruanmoraes.student_management_api.dtos.response.GradeResponseDTO;
@@ -31,29 +28,34 @@ public class GradeController {
         return ResponseEntity.status(200).body(gradeService.findAll());
     }
 
-    @GetMapping(value = "/findAllGradesByStudent/{studentId}", produces = "application/json")
+    @GetMapping(value = "/findAllGradesByStudentId/{studentId}", produces = "application/json")
     public ResponseEntity<StudentGradesResponseDTO> findAllGradesByStudentId(@PathVariable Long studentId) {
         return ResponseEntity.status(200).body(gradeService.findAllGradesByStudentId(studentId));
     }
 
-    @GetMapping(value = "/avarageByStudent/{studentId}", produces = "application/json")
-    public ResponseEntity<AvarageResponseDTO> averageGradeByStudentId(@PathVariable Long studentId) {
-        return ResponseEntity.status(200).body(gradeService.averageGradeByStudentId(studentId));
+    @GetMapping(value = "/findAverageForEachStudent", produces = "application/json")
+    public ResponseEntity<List<AverageStudentGradesResponseDTO>> findAverageForEachStudent() {
+        return ResponseEntity.status(200).body(gradeService.findAverageForEachStudent());
     }
 
-    @GetMapping(value = "/calculateAverageAllGrade", produces = "application/json")
-    public ResponseEntity<AvarageResponseDTO> calculateAverageAllGrade() {
-        return ResponseEntity.status(200).body(gradeService.calculateAverageAllGrade());
-    }
-
-    @GetMapping(value = "/calculateAvarageAllGradeByDiscipline", produces = "application/json")
-    public ResponseEntity<AvarageByDisciplineResponseDTO> calculateAvarageAllGradeByDiscipline() {
-        return ResponseEntity.status(200).body(gradeService.calculateAvarageAllGradeByDiscipline());
+    @GetMapping(value = "/findAverageStudentById/{studentId}", produces = "application/json")
+    public ResponseEntity<AverageStudentGradesResponseDTO> findAverageStudentById(@PathVariable Long studentId) {
+        return ResponseEntity.status(200).body(gradeService.findAverageStudentById(studentId));
     }
 
     @GetMapping(value = "/findAboveAverageStudents", produces = "application/json")
-    public ResponseEntity<List<GradeWithStudentAndDisciplineResponseDTO>> findAboveAverageStudents() {
+    public ResponseEntity<List<AverageStudentGradesResponseDTO>> findAboveAverageStudents() {
         return ResponseEntity.status(200).body(gradeService.findAboveAverageStudents());
+    }
+
+    @GetMapping(value = "/calculateAverageAllGrades", produces = "application/json")
+    public ResponseEntity<AverageOfAllGradesResponseDTO> calculateAverageAllGrades() {
+        return ResponseEntity.status(200).body(gradeService.calculateAverageAllGrades());
+    }
+
+    @GetMapping(value = "/averageGradesByDiscipline", produces = "application/json")
+    public ResponseEntity<AverageByDisciplineResponseDTO> calculateAverageGradesByDiscipline() {
+        return ResponseEntity.status(200).body(gradeService.calculateAverageGradesByDiscipline());
     }
 
     @PostMapping(produces = "application/json", consumes = "application/json")
@@ -66,5 +68,16 @@ public class GradeController {
         EnrollmentResponseDTO enrollmentResponseDTO = enrollmentService.findByStudentIdAndDisciplineId(studentId, disciplineId);
 
         return ResponseEntity.status(201).body(gradeService.create(enrollmentResponseDTO, gradeRequestDTO));
+    }
+
+    @PutMapping(produces = "application/json", consumes = "application/json")
+    public ResponseEntity<GradeResponseDTO> update(
+            @RequestParam(value = "studentId", required = true) Long studentId,
+            @RequestParam(value = "disciplineId", required = true) Long disciplineId,
+            @Valid @RequestBody GradeRequestDTO gradeRequestDTO
+    ) {
+        EnrollmentResponseDTO enrollmentResponseDTO = enrollmentService.findByStudentIdAndDisciplineId(studentId, disciplineId);
+
+        return ResponseEntity.status(200).body(gradeService.update(enrollmentResponseDTO, gradeRequestDTO));
     }
 }
