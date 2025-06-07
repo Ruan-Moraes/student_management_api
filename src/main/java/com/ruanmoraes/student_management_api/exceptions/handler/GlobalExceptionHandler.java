@@ -24,43 +24,51 @@ import java.util.stream.Collectors;
 //@ControllerAdvice
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    private Map<String, List<String>> getErrorsMap(List<String> errors) {
+        Map<String, List<String>> errorResponse = new HashMap<>();
+
+        errorResponse.put("errors", errors);
+
+        return errorResponse;
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public final ResponseEntity<ExceptionResponse> handleResourceNotFoundException(Exception e, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 new Date().toString(),
-                String.valueOf(404),
+                String.valueOf(HttpStatus.NOT_FOUND),
                 e.getClass().getSimpleName(),
                 e.getMessage(),
                 request.getDescription(false)
         );
 
-        return ResponseEntity.status(404).body(exceptionResponse);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionResponse);
     }
 
     @ExceptionHandler(ResourceAlreadyCreatedException.class)
     public final ResponseEntity<ExceptionResponse> EnrollmentAlreadyCreatedException(Exception e, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 new Date().toString(),
-                String.valueOf(409),
+                String.valueOf(HttpStatus.CONFLICT),
                 e.getClass().getSimpleName(),
                 e.getMessage(),
                 request.getDescription(false)
         );
 
-        return ResponseEntity.status(409).body(exceptionResponse);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exceptionResponse);
     }
 
     @ExceptionHandler(NameConflictException.class)
     public final ResponseEntity<ExceptionResponse> NameConflictException(Exception e, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 new Date().toString(),
-                String.valueOf(409),
+                String.valueOf(HttpStatus.CONFLICT),
                 e.getClass().getSimpleName(),
                 e.getMessage(),
                 request.getDescription(false)
         );
 
-        return ResponseEntity.status(409).body(exceptionResponse);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(exceptionResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -77,20 +85,12 @@ public class GlobalExceptionHandler {
     public final ResponseEntity<ExceptionResponse> handleAllExceptions(Exception e, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 new Date().toString(),
-                String.valueOf(500),
+                String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR),
                 e.getClass().getSimpleName(),
                 e.getMessage(),
                 request.getDescription(false)
         );
 
-        return ResponseEntity.status(500).body(exceptionResponse);
-    }
-
-    private Map<String, List<String>> getErrorsMap(List<String> errors) {
-        Map<String, List<String>> errorResponse = new HashMap<>();
-
-        errorResponse.put("errors", errors);
-
-        return errorResponse;
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exceptionResponse);
     }
 }

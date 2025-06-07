@@ -1,6 +1,6 @@
 package com.ruanmoraes.student_management_api.hateoas;
 
-import com.ruanmoraes.student_management_api.controllers.EnrollmentController;
+import com.ruanmoraes.student_management_api.controllers.impl.EnrollmentController;
 import com.ruanmoraes.student_management_api.dtos.response.EnrollmentResponseDTO;
 import com.ruanmoraes.student_management_api.mappers.EnrollmentMapper;
 import com.ruanmoraes.student_management_api.models.EnrollmentModel;

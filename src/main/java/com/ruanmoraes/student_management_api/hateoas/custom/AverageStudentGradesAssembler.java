@@ -1,6 +1,6 @@
 package com.ruanmoraes.student_management_api.hateoas.custom;
 
-import com.ruanmoraes.student_management_api.controllers.GradeController;
+import com.ruanmoraes.student_management_api.controllers.impl.GradeController;
 import com.ruanmoraes.student_management_api.dtos.custom.response.AverageStudentGradesResponseDTO;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;

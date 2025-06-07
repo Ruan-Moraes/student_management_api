@@ -60,7 +60,7 @@ public class StudentService {
         return studentAssembler.toModel(student);
     }
 
-    public List<StudentResponseDTO> listByLowFrequency(Double frequency) {
+    public List<StudentResponseDTO> findByLowFrequency(Double frequency) {
         return studentRepository.findAll().stream().filter(student -> student.getFrequency() < frequency)
                 .map(studentAssembler::toModel)
                 .toList();

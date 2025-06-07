@@ -1,6 +1,6 @@
 package com.ruanmoraes.student_management_api.hateoas;
 
-import com.ruanmoraes.student_management_api.controllers.DisciplineController;
+import com.ruanmoraes.student_management_api.controllers.impl.DisciplineController;
 import com.ruanmoraes.student_management_api.dtos.response.DisciplineResponseDTO;
 import com.ruanmoraes.student_management_api.mappers.DisciplineMapper;
 import com.ruanmoraes.student_management_api.models.DisciplineModel;

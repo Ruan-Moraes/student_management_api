@@ -1,6 +1,6 @@
 package com.ruanmoraes.student_management_api.hateoas;
 
-import com.ruanmoraes.student_management_api.controllers.GradeController;
+import com.ruanmoraes.student_management_api.controllers.impl.GradeController;
 import com.ruanmoraes.student_management_api.dtos.response.GradeResponseDTO;
 import com.ruanmoraes.student_management_api.mappers.GradeMapper;
 import com.ruanmoraes.student_management_api.models.GradeModel;
